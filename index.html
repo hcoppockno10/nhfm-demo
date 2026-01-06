@@ -3,73 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedGuard Demo - NHS AI Medication Safety Workflow</title>
+    <title>MedGuard Demo - NHS AI Medication Safety</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<!--
-================================================================================
-README - HOW TO ADD NEW SCENARIOS
-================================================================================
-
-This demo shows an NHS-style AI medication safety workflow with 4 phases:
-1. AI Review - Automated patient screening
-2. Patient Engagement - Information gathering (no clinical advice given)
-3. Clinician Review - Review evidence, approve/reject actions
-4. Execution - Execute approved actions with full audit trail
-
-TO ADD A NEW SCENARIO:
-1. Open scenarios.js
-2. Copy the SCENARIO TEMPLATE at the bottom of the file
-3. Fill in:
-   - id: unique identifier (e.g., "drug-interaction-002")
-   - name: display name for the dropdown
-   - patient: demographics, conditions, meds, allergies, labs
-   - patientChat: array of scripted messages (role: 'assistant' | 'patient')
-   - clinicianChat: array of scripted messages (role: 'system' | 'assistant' | 'clinician')
-   - actions: proposed actions for clinician approval
-   - auditTemplate: events triggered at specific points
-   - guardrails: list of what the system did NOT do
-   - dataAccessed: coded items accessed during workflow
-4. Add your scenario to the SCENARIOS array
-5. Refresh the page - it will appear in the dropdown
-
-PATIENT LIST (AI SCANNING):
-The PATIENT_LIST in scenarios.js shows patients during the scanning phase.
-Set status: 'flagged' on the patient that should trigger the scenario.
-The flaggedPatientId in the scenario should match the flagged patient's id.
-
-CHAT MESSAGE FORMAT:
-{
-    id: "unique-id",
-    role: "assistant" | "patient" | "clinician" | "system",
-    text: "Message text. Supports **bold** and *italic* formatting.",
-    delayMs: 1000  // Optional: typing delay in ms (default: random 600-1200ms)
-}
-
-ACTION FORMAT:
-{
-    id: "action-1",
-    title: "Action title",
-    impact: "HIGH" | "MEDIUM" | "LOW",
-    rationale: "Why this action is recommended",
-    evidence: ["Evidence point 1", "Evidence point 2"],
-    patientMessageDraft: "Message sent to patient after approval",
-    status: "pending",
-    feedbackText: "Pre-scripted feedback shown when 'Needs Changes' is clicked"
-}
-
-AUDIT EVENT TRIGGERS:
-- onLoad: When scenario loads (Phase 1)
-- onPatientChatStart: When Phase 2 begins
-- onPatientChatStep: At specific chat message index (use stepIndex property)
-- onPatientChatComplete: When patient chat ends
-- onClinicianReviewStart: When Phase 3 begins
-- onActionApprove: When an action is approved (use actionId property)
-- onExecute: When an action is executed (use actionId property)
-- onComplete: When workflow completes
-
-================================================================================
--->
 <body>
     <div class="app-container">
         <!-- Header -->
@@ -79,13 +15,10 @@ AUDIT EVENT TRIGGERS:
                 MedGuard - AI Medication Safety Demo
             </h1>
             <div class="header-controls">
-                <select id="scenario-select">
-                    <!-- Populated by JS -->
-                </select>
-                <label class="speed-toggle">
-                    <input type="checkbox" id="speed-toggle">
-                    Fast Mode
-                </label>
+                <button id="btn-play" class="btn-play">
+                    <span class="play-icon"></span>
+                    Play Demo
+                </button>
                 <button id="btn-reset" class="btn-reset">Reset</button>
             </div>
         </header>
@@ -94,24 +27,20 @@ AUDIT EVENT TRIGGERS:
         <main class="main-content">
             <!-- Progress Sidebar -->
             <aside class="progress-sidebar">
-                <h2>Workflow Progress</h2>
-                <ul id="phase-progress" class="phase-list">
-                    <!-- Populated by JS -->
-                </ul>
+                <h2>Workflow</h2>
+                <ul id="phase-progress" class="phase-list"></ul>
             </aside>
 
             <!-- Content Area -->
             <div class="content-area">
                 <!-- Phase 1: AI Scanning -->
-                <section id="phase-1" class="phase-container">
+                <section id="phase-1" class="phase-container active">
                     <div class="phase-header">
                         <h2>Automated Patient Review</h2>
-                        <p>AI is reviewing recent lab results and medication records for safety concerns</p>
+                        <p>AI reviewing recent lab results and medication records</p>
                     </div>
                     <div class="phase-body">
-                        <div id="patient-list" class="patient-list">
-                            <!-- Populated by JS -->
-                        </div>
+                        <div id="patient-list" class="patient-list"></div>
                     </div>
                 </section>
 
@@ -119,45 +48,28 @@ AUDIT EVENT TRIGGERS:
                 <section id="phase-2" class="phase-container">
                     <div class="phase-header">
                         <h2>Patient Engagement</h2>
-                        <p>NHS Medication Safety Assistant gathering information via NHS App</p>
+                        <p>Information gathering via NHS App</p>
                     </div>
                     <div class="phase-body">
                         <div class="warning-banner">
-                            <strong>Important Notice</strong>
-                            This is not an emergency service. If you are experiencing a medical emergency, please call 999.
-                            This assistant gathers information only and cannot provide medical advice.
+                            <strong>Important:</strong> This is not an emergency service. This assistant gathers information only and cannot provide medical advice.
                         </div>
-                        <div id="patient-chat-container" class="chat-container">
-                            <!-- Populated by JS -->
-                        </div>
+                        <div id="chat-container" class="chat-container"></div>
                     </div>
                 </section>
 
                 <!-- Phase 3: Clinician Review -->
                 <section id="phase-3" class="phase-container">
                     <div class="phase-header">
-                        <span class="clinician-badge">Clinician View Only</span>
+                        <span class="clinician-badge">Clinician View</span>
                         <h2>Clinical Review & Approval</h2>
-                        <p>Review patient information, evidence, and approve or reject proposed actions</p>
+                        <p>Review flagged issue and approve actions</p>
                     </div>
                     <div class="phase-body">
-                        <div class="clinician-layout">
-                            <div class="clinician-left">
-                                <div id="patient-summary" class="patient-summary">
-                                    <!-- Populated by JS -->
-                                </div>
-                                <div id="action-cards" class="action-cards">
-                                    <!-- Populated by JS -->
-                                </div>
-                            </div>
-                            <div class="clinician-right">
-                                <div class="clinician-chat-section">
-                                    <h4>Clinical Q&A</h4>
-                                    <div id="clinician-chat-container" class="clinician-chat-container">
-                                        <!-- Populated by JS -->
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="clinician-content">
+                            <div id="patient-summary" class="patient-summary"></div>
+                            <div id="issue-card" class="issue-card"></div>
+                            <div id="action-cards"></div>
                         </div>
                     </div>
                 </section>
@@ -165,56 +77,32 @@ AUDIT EVENT TRIGGERS:
                 <!-- Phase 4: Execution -->
                 <section id="phase-4" class="phase-container">
                     <div class="phase-header">
-                        <h2>Action Execution & Audit</h2>
-                        <p>Execute approved actions and review complete audit trail</p>
+                        <h2>Execution & Audit Trail</h2>
+                        <p>Actions executed with full audit logging</p>
                     </div>
                     <div class="phase-body">
-                        <div class="execution-layout">
+                        <div class="audit-layout">
                             <div>
-                                <h4 style="margin-bottom: 16px; color: var(--nhs-dark-blue);">Audit Timeline</h4>
-                                <div id="audit-timeline" class="audit-timeline">
-                                    <!-- Populated by JS -->
-                                </div>
+                                <h4 style="margin-bottom: 12px; color: #003087;">Timeline</h4>
+                                <div id="audit-timeline" class="audit-timeline"></div>
                             </div>
                             <div>
-                                <div id="audit-details-section" class="audit-details-section" style="margin-bottom: 20px;">
-                                    <!-- Populated by JS -->
-                                </div>
-                                <h4 style="margin-bottom: 16px; color: var(--nhs-dark-blue);">Patient Notification</h4>
-                                <div id="notification-preview">
-                                    <!-- Populated by JS -->
-                                </div>
+                                <div id="audit-details" class="audit-details-panel"></div>
+                                <div id="notification-preview" class="notification-preview"></div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- Control Bar -->
-                <div class="control-bar">
-                    <span id="progress-text" class="progress-text"></span>
-                    <div>
-                        <button id="btn-next" class="btn-next">Next</button>
-                        <button id="btn-execute" class="btn-execute" style="display: none;">Execute Approved Actions</button>
-                    </div>
+                <!-- Status Bar -->
+                <div class="status-bar">
+                    <span id="status-text"></span>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Scripts -->
     <script src="scenarios.js"></script>
     <script src="app.js"></script>
-    <script>
-        // Populate scenario dropdown
-        document.addEventListener('DOMContentLoaded', function() {
-            const select = document.getElementById('scenario-select');
-            SCENARIOS.forEach(scenario => {
-                const option = document.createElement('option');
-                option.value = scenario.id;
-                option.textContent = scenario.name;
-                select.appendChild(option);
-            });
-        });
-    </script>
 </body>
 </html>
