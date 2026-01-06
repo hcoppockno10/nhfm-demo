@@ -1,0 +1,1176 @@
+/**
+ * MedGuard Demo - NHS-Themed Styles
+ *
+ * Color Palette (NHS Identity):
+ * - NHS Blue: #005eb8
+ * - NHS Dark Blue: #003087
+ * - NHS Bright Blue: #0072ce
+ * - NHS Light Blue: #41b6e6
+ * - NHS Aqua Blue: #00a9ce
+ * - NHS Black: #231f20
+ * - NHS Dark Grey: #425563
+ * - NHS Mid Grey: #768692
+ * - NHS Pale Grey: #e8edee
+ * - NHS Green: #007f3b (success)
+ * - NHS Red: #da291c (alerts)
+ * - NHS Warm Yellow: #ffb81c (warnings)
+ */
+
+/* Reset and Base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --nhs-blue: #005eb8;
+    --nhs-dark-blue: #003087;
+    --nhs-bright-blue: #0072ce;
+    --nhs-light-blue: #41b6e6;
+    --nhs-aqua: #00a9ce;
+    --nhs-black: #231f20;
+    --nhs-dark-grey: #425563;
+    --nhs-mid-grey: #768692;
+    --nhs-pale-grey: #e8edee;
+    --nhs-green: #007f3b;
+    --nhs-red: #da291c;
+    --nhs-yellow: #ffb81c;
+    --nhs-white: #ffffff;
+
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --border-radius: 4px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --transition: all 0.2s ease;
+}
+
+html, body {
+    height: 100%;
+    font-family: var(--font-family);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--nhs-black);
+    background: var(--nhs-pale-grey);
+}
+
+/* App Layout */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+    background: var(--nhs-white);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Header */
+.app-header {
+    background: var(--nhs-blue);
+    color: var(--nhs-white);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nhs-logo {
+    background: var(--nhs-white);
+    color: var(--nhs-blue);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.header-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.header-controls select,
+.header-controls button {
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.header-controls select {
+    background: var(--nhs-white);
+    border: none;
+    color: var(--nhs-black);
+}
+
+.btn-reset {
+    background: transparent;
+    border: 2px solid var(--nhs-white);
+    color: var(--nhs-white);
+    transition: var(--transition);
+}
+
+.btn-reset:hover {
+    background: var(--nhs-white);
+    color: var(--nhs-blue);
+}
+
+.speed-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--nhs-white);
+    font-size: 0.875rem;
+}
+
+.speed-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+/* Progress Sidebar */
+.progress-sidebar {
+    width: 280px;
+    background: var(--nhs-dark-blue);
+    color: var(--nhs-white);
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.progress-sidebar h2 {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+    opacity: 0.8;
+}
+
+.phase-list {
+    list-style: none;
+}
+
+.phase-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0.5;
+    transition: var(--transition);
+}
+
+.phase-item.active {
+    opacity: 1;
+}
+
+.phase-item.completed {
+    opacity: 0.7;
+}
+
+.phase-indicator {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.phase-item.active .phase-indicator {
+    background: var(--nhs-light-blue);
+    border-color: var(--nhs-light-blue);
+    color: var(--nhs-dark-blue);
+}
+
+.phase-item.completed .phase-indicator {
+    background: var(--nhs-green);
+    border-color: var(--nhs-green);
+}
+
+.phase-content h3 {
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+.phase-content p {
+    font-size: 0.813rem;
+    opacity: 0.7;
+}
+
+/* Content Area */
+.content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--nhs-white);
+    overflow: hidden;
+}
+
+/* Phase Container */
+.phase-container {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.phase-container.active {
+    display: flex;
+}
+
+/* Phase Header */
+.phase-header {
+    padding: 20px 24px;
+    background: var(--nhs-pale-grey);
+    border-bottom: 1px solid #ddd;
+}
+
+.phase-header h2 {
+    font-size: 1.25rem;
+    color: var(--nhs-dark-blue);
+    margin-bottom: 4px;
+}
+
+.phase-header p {
+    color: var(--nhs-mid-grey);
+    font-size: 0.875rem;
+}
+
+.clinician-badge {
+    display: inline-block;
+    background: var(--nhs-dark-blue);
+    color: var(--nhs-white);
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+/* Phase Body */
+.phase-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+/* Phase 1: AI Scanning */
+.patient-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 600px;
+}
+
+.patient-row {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--nhs-pale-grey);
+    border-radius: var(--border-radius);
+    border-left: 4px solid transparent;
+    transition: var(--transition);
+}
+
+.patient-row.scanning {
+    border-left-color: var(--nhs-yellow);
+    background: #fff8e6;
+}
+
+.patient-row.scanned {
+    border-left-color: var(--nhs-green);
+}
+
+.patient-row.flagged {
+    border-left-color: var(--nhs-red);
+    background: #fef2f2;
+}
+
+.patient-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--nhs-mid-grey);
+    color: var(--nhs-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-right: 16px;
+}
+
+.patient-info {
+    flex: 1;
+}
+
+.patient-info h4 {
+    font-size: 1rem;
+    color: var(--nhs-black);
+}
+
+.patient-info p {
+    font-size: 0.875rem;
+    color: var(--nhs-mid-grey);
+}
+
+.patient-status {
+    font-size: 0.813rem;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.patient-status.pending {
+    background: var(--nhs-pale-grey);
+    color: var(--nhs-mid-grey);
+}
+
+.patient-status.scanning {
+    background: var(--nhs-yellow);
+    color: var(--nhs-black);
+}
+
+.patient-status.ok {
+    background: #d4edda;
+    color: var(--nhs-green);
+}
+
+.patient-status.flagged {
+    background: var(--nhs-red);
+    color: var(--nhs-white);
+}
+
+.scan-result {
+    margin-top: 8px;
+    font-size: 0.813rem;
+    font-style: italic;
+    color: var(--nhs-dark-grey);
+}
+
+.scan-result.alert {
+    color: var(--nhs-red);
+    font-weight: 500;
+    font-style: normal;
+}
+
+/* Scanning Animation */
+.scanning-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--nhs-yellow);
+}
+
+.scanning-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.scanning-dots span {
+    width: 8px;
+    height: 8px;
+    background: var(--nhs-yellow);
+    border-radius: 50%;
+    animation: pulse 1s infinite;
+}
+
+.scanning-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.scanning-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1); }
+}
+
+/* Phase 2: Patient Chat */
+.warning-banner {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: var(--border-radius);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 0.875rem;
+    color: #856404;
+}
+
+.warning-banner strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 700px;
+}
+
+.chat-message {
+    display: flex;
+    gap: 12px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-message.patient {
+    flex-direction: row-reverse;
+}
+
+.chat-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.chat-message.assistant .chat-avatar {
+    background: var(--nhs-blue);
+    color: var(--nhs-white);
+}
+
+.chat-message.patient .chat-avatar {
+    background: var(--nhs-mid-grey);
+    color: var(--nhs-white);
+}
+
+.chat-message.system .chat-avatar {
+    background: var(--nhs-dark-grey);
+    color: var(--nhs-white);
+}
+
+.chat-message.clinician .chat-avatar {
+    background: var(--nhs-dark-blue);
+    color: var(--nhs-white);
+}
+
+.chat-bubble {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.938rem;
+    line-height: 1.5;
+}
+
+.chat-message.assistant .chat-bubble {
+    background: var(--nhs-pale-grey);
+    border-bottom-left-radius: 4px;
+}
+
+.chat-message.patient .chat-bubble {
+    background: var(--nhs-light-blue);
+    color: var(--nhs-black);
+    border-bottom-right-radius: 4px;
+}
+
+.chat-message.system .chat-bubble {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+.chat-message.clinician .chat-bubble {
+    background: var(--nhs-dark-blue);
+    color: var(--nhs-white);
+    border-bottom-right-radius: 4px;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px;
+    background: var(--nhs-pale-grey);
+    border-radius: 12px;
+    border-bottom-left-radius: 4px;
+    width: fit-content;
+}
+
+.typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background: var(--nhs-mid-grey);
+    border-radius: 50%;
+    animation: typing 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+/* Phase 3: Clinician Review */
+.clinician-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    height: 100%;
+}
+
+.clinician-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+.clinician-right {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Patient Summary Card */
+.patient-summary {
+    background: var(--nhs-white);
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    padding: 20px;
+}
+
+.patient-summary h3 {
+    font-size: 1.125rem;
+    color: var(--nhs-dark-blue);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--nhs-blue);
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.summary-item {
+    font-size: 0.875rem;
+}
+
+.summary-item label {
+    display: block;
+    color: var(--nhs-mid-grey);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.summary-item span {
+    color: var(--nhs-black);
+    font-weight: 500;
+}
+
+.summary-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.summary-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.summary-list li {
+    background: var(--nhs-pale-grey);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.813rem;
+}
+
+.summary-list li.flagged {
+    background: #fef2f2;
+    color: var(--nhs-red);
+    border: 1px solid var(--nhs-red);
+}
+
+/* Labs Table */
+.labs-table {
+    width: 100%;
+    font-size: 0.813rem;
+    margin-top: 8px;
+}
+
+.labs-table th,
+.labs-table td {
+    text-align: left;
+    padding: 6px 8px;
+}
+
+.labs-table th {
+    background: var(--nhs-pale-grey);
+    font-weight: 600;
+    color: var(--nhs-dark-grey);
+}
+
+.labs-table .flag-high,
+.labs-table .flag-low {
+    color: var(--nhs-red);
+    font-weight: 600;
+}
+
+.labs-table .flag-normal {
+    color: var(--nhs-green);
+}
+
+/* Action Cards */
+.action-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.action-card {
+    background: var(--nhs-white);
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    transition: var(--transition);
+}
+
+.action-card.approved {
+    border-color: var(--nhs-green);
+    background: #f0fff4;
+}
+
+.action-card.changes {
+    border-color: var(--nhs-yellow);
+    background: #fffbeb;
+}
+
+.action-card.rejected {
+    border-color: var(--nhs-red);
+    background: #fef2f2;
+    opacity: 0.7;
+}
+
+.action-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.action-header h4 {
+    font-size: 1rem;
+    color: var(--nhs-dark-blue);
+}
+
+.impact-badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.impact-badge.high {
+    background: #fef2f2;
+    color: var(--nhs-red);
+}
+
+.impact-badge.medium {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.impact-badge.low {
+    background: #f0fff4;
+    color: var(--nhs-green);
+}
+
+.action-rationale {
+    font-size: 0.875rem;
+    color: var(--nhs-dark-grey);
+    margin-bottom: 12px;
+}
+
+.evidence-list {
+    list-style: none;
+    margin-bottom: 16px;
+}
+
+.evidence-list li {
+    font-size: 0.813rem;
+    color: var(--nhs-dark-grey);
+    padding: 4px 0 4px 20px;
+    position: relative;
+}
+
+.evidence-list li::before {
+    content: "•";
+    position: absolute;
+    left: 6px;
+    color: var(--nhs-blue);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-buttons button {
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+}
+
+.btn-approve {
+    background: var(--nhs-green);
+    color: var(--nhs-white);
+}
+
+.btn-approve:hover {
+    background: #006633;
+}
+
+.btn-changes {
+    background: var(--nhs-yellow);
+    color: var(--nhs-black);
+}
+
+.btn-changes:hover {
+    background: #e6a619;
+}
+
+.btn-reject {
+    background: var(--nhs-red);
+    color: var(--nhs-white);
+}
+
+.btn-reject:hover {
+    background: #b82318;
+}
+
+.action-status {
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.action-status.approved {
+    background: var(--nhs-green);
+    color: var(--nhs-white);
+}
+
+.action-status.changes {
+    background: var(--nhs-yellow);
+    color: var(--nhs-black);
+}
+
+.action-status.rejected {
+    background: var(--nhs-red);
+    color: var(--nhs-white);
+}
+
+/* Feedback Text */
+.feedback-container {
+    margin-top: 12px;
+    padding: 12px;
+    background: #fffbeb;
+    border: 1px solid var(--nhs-yellow);
+    border-radius: var(--border-radius);
+}
+
+.feedback-container label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--nhs-dark-grey);
+    margin-bottom: 8px;
+}
+
+.feedback-container textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    resize: none;
+    font-family: var(--font-family);
+}
+
+/* Clinician Chat */
+.clinician-chat-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.clinician-chat-section h4 {
+    font-size: 0.875rem;
+    color: var(--nhs-dark-grey);
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 16px;
+}
+
+.clinician-chat-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Phase 4: Execution */
+.execution-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    height: 100%;
+}
+
+.audit-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    padding-left: 24px;
+}
+
+.audit-timeline::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--nhs-pale-grey);
+}
+
+.audit-event {
+    position: relative;
+    padding: 12px 16px;
+    padding-left: 24px;
+    animation: fadeIn 0.3s ease;
+}
+
+.audit-event::before {
+    content: "";
+    position: absolute;
+    left: -18px;
+    top: 16px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--nhs-mid-grey);
+    border: 2px solid var(--nhs-white);
+}
+
+.audit-event.system::before {
+    background: var(--nhs-blue);
+}
+
+.audit-event.assistant::before {
+    background: var(--nhs-bright-blue);
+}
+
+.audit-event.clinician::before {
+    background: var(--nhs-dark-blue);
+}
+
+.audit-timestamp {
+    font-size: 0.75rem;
+    color: var(--nhs-mid-grey);
+    margin-bottom: 4px;
+}
+
+.audit-actor {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.audit-actor.system {
+    background: var(--nhs-pale-grey);
+    color: var(--nhs-dark-grey);
+}
+
+.audit-actor.assistant {
+    background: #e0f2ff;
+    color: var(--nhs-blue);
+}
+
+.audit-actor.clinician {
+    background: var(--nhs-dark-blue);
+    color: var(--nhs-white);
+}
+
+.audit-text {
+    font-size: 0.938rem;
+    color: var(--nhs-black);
+}
+
+.audit-details {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--nhs-pale-grey);
+    border-radius: var(--border-radius);
+    font-size: 0.813rem;
+    color: var(--nhs-dark-grey);
+}
+
+/* Audit Details Section */
+.audit-details-section {
+    background: var(--nhs-white);
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+}
+
+.audit-details-header {
+    padding: 12px 16px;
+    background: var(--nhs-pale-grey);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+}
+
+.audit-details-header:hover {
+    background: #dde3e5;
+}
+
+.audit-details-content {
+    padding: 16px;
+    display: none;
+}
+
+.audit-details-content.expanded {
+    display: block;
+}
+
+.audit-details-content h5 {
+    font-size: 0.875rem;
+    color: var(--nhs-dark-blue);
+    margin-bottom: 8px;
+    margin-top: 16px;
+}
+
+.audit-details-content h5:first-child {
+    margin-top: 0;
+}
+
+.data-accessed-list,
+.guardrails-list {
+    list-style: none;
+    font-size: 0.875rem;
+}
+
+.data-accessed-list li,
+.guardrails-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--nhs-pale-grey);
+}
+
+.guardrails-list li {
+    color: var(--nhs-green);
+}
+
+.guardrails-list li::before {
+    content: "✓ ";
+    font-weight: bold;
+}
+
+/* Patient Notification Preview */
+.notification-preview {
+    background: var(--nhs-white);
+    border: 2px solid var(--nhs-blue);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.notification-header {
+    background: var(--nhs-blue);
+    color: var(--nhs-white);
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.notification-body {
+    padding: 16px;
+    font-size: 0.938rem;
+    line-height: 1.6;
+}
+
+/* Control Bar */
+.control-bar {
+    padding: 16px 24px;
+    background: var(--nhs-pale-grey);
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-next {
+    background: var(--nhs-blue);
+    color: var(--nhs-white);
+    padding: 12px 32px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-next:hover:not(:disabled) {
+    background: var(--nhs-dark-blue);
+}
+
+.btn-next:disabled {
+    background: var(--nhs-mid-grey);
+    cursor: not-allowed;
+}
+
+.btn-execute {
+    background: var(--nhs-green);
+    color: var(--nhs-white);
+    padding: 12px 32px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-execute:hover:not(:disabled) {
+    background: #006633;
+}
+
+.btn-execute:disabled {
+    background: var(--nhs-mid-grey);
+    cursor: not-allowed;
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    color: var(--nhs-mid-grey);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .clinician-layout,
+    .execution-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .progress-sidebar {
+        width: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .progress-sidebar {
+        display: none;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Markdown-like formatting in chat */
+.chat-bubble strong {
+    font-weight: 600;
+}
+
+.chat-bubble em {
+    font-style: italic;
+}
+
+/* Simple table in chat */
+.chat-bubble table {
+    width: 100%;
+    margin: 12px 0;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.chat-bubble th,
+.chat-bubble td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-bubble th {
+    background: rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+}
+
+/* List formatting in chat */
+.chat-bubble ul,
+.chat-bubble ol {
+    margin: 8px 0;
+    padding-left: 24px;
+}
+
+.chat-bubble li {
+    margin: 4px 0;
+}
