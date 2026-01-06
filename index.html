@@ -15,6 +15,58 @@
                 MedGuard - AI Medication Safety Demo
             </h1>
             <div class="header-controls">
+                <!-- Timeline Scrubber -->
+                <div class="timeline-container">
+                    <div class="timeline-phases">
+                        <!-- Phase 1: AI Scanning (4 steps) -->
+                        <div class="timeline-phase" data-phase="1">
+                            <span class="phase-label">AI</span>
+                            <div class="phase-markers">
+                                <button class="timeline-marker" data-step="0" title="Scan Start"></button>
+                                <button class="timeline-marker" data-step="1" title="Patient 1"></button>
+                                <button class="timeline-marker" data-step="2" title="Patient 2"></button>
+                                <button class="timeline-marker" data-step="3" title="Flagged"></button>
+                            </div>
+                        </div>
+                        <!-- Phase 2: Patient Chat (6 steps) -->
+                        <div class="timeline-phase" data-phase="2">
+                            <span class="phase-label">Chat</span>
+                            <div class="phase-markers">
+                                <button class="timeline-marker" data-step="4" title="Chat Start"></button>
+                                <button class="timeline-marker" data-step="5" title="Greeting"></button>
+                                <button class="timeline-marker" data-step="6" title="Confirm ID"></button>
+                                <button class="timeline-marker" data-step="7" title="Ask Meds"></button>
+                                <button class="timeline-marker" data-step="8" title="Ibuprofen"></button>
+                                <button class="timeline-marker" data-step="9" title="Noted"></button>
+                            </div>
+                        </div>
+                        <!-- Phase 3: Clinician Review (4 steps) -->
+                        <div class="timeline-phase" data-phase="3">
+                            <span class="phase-label">Review</span>
+                            <div class="phase-markers">
+                                <button class="timeline-marker" data-step="10" title="Review Start"></button>
+                                <button class="timeline-marker" data-step="11" title="Issue Agreed"></button>
+                                <button class="timeline-marker" data-step="12" title="Action 1"></button>
+                                <button class="timeline-marker" data-step="13" title="Action 2"></button>
+                            </div>
+                        </div>
+                        <!-- Phase 4: Execution (6 steps) -->
+                        <div class="timeline-phase" data-phase="4">
+                            <span class="phase-label">Execute</span>
+                            <div class="phase-markers">
+                                <button class="timeline-marker" data-step="14" title="Execute Start"></button>
+                                <button class="timeline-marker" data-step="15" title="Notify 1"></button>
+                                <button class="timeline-marker" data-step="16" title="Message 1"></button>
+                                <button class="timeline-marker" data-step="17" title="Notify 2"></button>
+                                <button class="timeline-marker" data-step="18" title="Message 2"></button>
+                                <button class="timeline-marker" data-step="19" title="Complete"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-track">
+                        <div id="timeline-progress" class="timeline-progress"></div>
+                    </div>
+                </div>
                 <button id="btn-play" class="btn-play">
                     <span class="play-icon"></span>
                     Play Demo
@@ -76,6 +128,7 @@
                 </div>
             </div>
         </main>
+
     </div>
 
     <!-- iPhone Overlay (pops up over content) -->
