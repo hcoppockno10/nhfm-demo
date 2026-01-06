@@ -354,11 +354,11 @@ html, body {
 .chat-message {
     display: flex;
     gap: 10px;
-    animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -394,6 +394,11 @@ html, body {
 .chat-message.patient .chat-bubble {
     background: var(--nhs-light-blue);
     border-bottom-right-radius: 4px;
+}
+
+.chat-message.outcome .chat-bubble {
+    background: linear-gradient(135deg, #e8f4ea 0%, var(--nhs-pale-grey) 100%);
+    border-left: 3px solid #007f3b;
 }
 
 .typing-indicator {

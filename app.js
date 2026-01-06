@@ -6,6 +6,7 @@ const state = {
     phase: 1,
     scanIndex: -1,
     chatIndex: 0,
+    outcomeIndex: 0,
     issueDecided: false,
     actionsStatus: {},
     auditEvents: [],
@@ -37,6 +38,7 @@ function resetDemo() {
     state.phase = 1;
     state.scanIndex = -1;
     state.chatIndex = 0;
+    state.outcomeIndex = 0;
     state.issueDecided = false;
     state.actionsStatus = {};
     state.scenario.actions.forEach(a => state.actionsStatus[a.id] = 'pending');
@@ -201,16 +203,48 @@ async function runPhase3() {
 
 // ========== PHASE 4: EXECUTION ==========
 async function runPhase4() {
-    // Add execution events with delays
+    const overlay = document.getElementById('iphone-overlay');
+    const iphone = document.getElementById('iphone-mockup');
+
+    // Add first execution event
     await delay(800);
     addAudit('execute1');
     render();
 
+    // Show iPhone with outcome messages
+    await delay(600);
+    if (overlay) overlay.classList.add('visible');
+    await delay(200);
+    if (iphone) iphone.classList.add('visible');
+    await delay(600);
+
+    // Show typing then first outcome message
+    showTyping(true);
+    await delay(1000);
+    showTyping(false);
+    state.outcomeIndex = 1;
+    render();
+    scrollToBottom('chat-container');
     await delay(1200);
+
+    // Add second execution event and show second outcome message
     addAudit('execute2');
     render();
 
-    await delay(1200);
+    showTyping(true);
+    await delay(1000);
+    showTyping(false);
+    state.outcomeIndex = 2;
+    render();
+    scrollToBottom('chat-container');
+    await delay(1500);
+
+    // Hide iPhone
+    if (iphone) iphone.classList.remove('visible');
+    await delay(400);
+    if (overlay) overlay.classList.remove('visible');
+
+    await delay(800);
     addAudit('complete');
     render();
 
@@ -332,12 +366,27 @@ function renderPhase2Content() {
 
     const messages = state.scenario.patientChat.slice(0, state.chatIndex);
 
-    container.innerHTML = messages.map(m => `
+    let html = messages.map(m => `
         <div class="chat-message ${m.role}">
             <div class="chat-avatar">${m.role === 'assistant' ? 'NHS' : 'PT'}</div>
             <div class="chat-bubble">${m.text}</div>
         </div>
     `).join('');
+
+    // Add outcome messages in Phase 4
+    if (state.phase === 4 && state.outcomeIndex > 0) {
+        const actions = state.scenario.actions;
+        for (let i = 0; i < state.outcomeIndex && i < actions.length; i++) {
+            html += `
+                <div class="chat-message assistant outcome">
+                    <div class="chat-avatar">NHS</div>
+                    <div class="chat-bubble">${actions[i].patientMessageDraft}</div>
+                </div>
+            `;
+        }
+    }
+
+    container.innerHTML = html;
 }
 
 function renderPhase3Content() {
@@ -460,7 +509,7 @@ function showTyping(show) {
 
 function scrollToBottom(id) {
     const el = document.getElementById(id);
-    if (el) el.scrollTop = el.scrollHeight;
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
 }
 
 function addAudit(trigger) {
