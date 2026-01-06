@@ -2,8 +2,37 @@
  * MedGuard Demo - Auto-Play with Simulated Mouse
  */
 
+// Timeline steps definition (20 total)
+const TIMELINE_STEPS = [
+    // Phase 1: AI Scanning (4 steps)
+    { id: 'scan-start', phase: 1, label: 'Scan Start' },
+    { id: 'scan-p1', phase: 1, label: 'Patient 1' },
+    { id: 'scan-p2', phase: 1, label: 'Patient 2' },
+    { id: 'scan-flagged', phase: 1, label: 'Flagged' },
+    // Phase 2: Patient Chat (6 steps)
+    { id: 'chat-start', phase: 2, label: 'Chat Start' },
+    { id: 'chat-m1', phase: 2, label: 'Greeting' },
+    { id: 'chat-m2', phase: 2, label: 'Confirm ID' },
+    { id: 'chat-m3', phase: 2, label: 'Ask Meds' },
+    { id: 'chat-m4', phase: 2, label: 'Ibuprofen' },
+    { id: 'chat-m5', phase: 2, label: 'Noted' },
+    // Phase 3: Clinician Review (4 steps)
+    { id: 'review-start', phase: 3, label: 'Review' },
+    { id: 'issue-agreed', phase: 3, label: 'Agreed' },
+    { id: 'action1-approved', phase: 3, label: 'Action 1' },
+    { id: 'action2-approved', phase: 3, label: 'Action 2' },
+    // Phase 4: Execution (6 steps)
+    { id: 'exec-start', phase: 4, label: 'Execute' },
+    { id: 'notify-1', phase: 4, label: 'Notify 1' },
+    { id: 'outcome-1', phase: 4, label: 'Msg 1' },
+    { id: 'notify-2', phase: 4, label: 'Notify 2' },
+    { id: 'outcome-2', phase: 4, label: 'Msg 2' },
+    { id: 'complete', phase: 4, label: 'Complete' }
+];
+
 const state = {
     phase: 1,
+    stepIndex: 0,
     scanIndex: -1,
     chatIndex: 0,
     outcomeIndex: 0,
@@ -31,11 +60,20 @@ function init() {
     document.getElementById('btn-play').addEventListener('click', handlePlayClick);
     document.getElementById('btn-reset').addEventListener('click', resetDemo);
 
+    // Timeline marker click handlers
+    document.querySelectorAll('.timeline-marker').forEach(marker => {
+        marker.addEventListener('click', () => {
+            const step = parseInt(marker.dataset.step);
+            jumpToStep(step);
+        });
+    });
+
     render();
 }
 
 function resetDemo() {
     state.phase = 1;
+    state.stepIndex = 0;
     state.scanIndex = -1;
     state.chatIndex = 0;
     state.outcomeIndex = 0;
@@ -117,10 +155,13 @@ async function startDemo() {
 
 // ========== PHASE 1: AI SCANNING ==========
 async function runPhase1() {
+    state.stepIndex = 0; // scan-start
     addAudit('scan');
+    render();
 
     for (let i = 0; i < PATIENT_LIST.length; i++) {
         state.scanIndex = i;
+        state.stepIndex = i + 1; // scan-p1 (1), scan-p2 (2), scan-flagged (3)
         render();
 
         await delay(1000);
@@ -137,7 +178,9 @@ async function runPhase1() {
 
 // ========== PHASE 2: PATIENT CHAT ==========
 async function runPhase2() {
+    state.stepIndex = 4; // chat-start
     addAudit('patientStart');
+    render();
 
     const messages = state.scenario.patientChat;
 
@@ -152,6 +195,7 @@ async function runPhase2() {
         }
 
         state.chatIndex = i + 1;
+        state.stepIndex = 5 + i; // chat-m1 (5) through chat-m5 (9)
         render();
         scrollToBottom('chat-container');
 
@@ -164,7 +208,9 @@ async function runPhase2() {
 
 // ========== PHASE 3: CLINICIAN REVIEW ==========
 async function runPhase3() {
+    state.stepIndex = 10; // review-start
     addAudit('clinicianStart');
+    render();
     await delay(1000);
 
     // Move to issue card and click Agree
@@ -174,6 +220,7 @@ async function runPhase3() {
         await simulateClick(issueAgreeBtn);
     }
     state.issueDecided = true;
+    state.stepIndex = 11; // issue-agreed
     addAudit('issueAgreed');
     render();
     await delay(1200);
@@ -185,6 +232,7 @@ async function runPhase3() {
         await simulateClick(action1Btn);
     }
     state.actionsStatus['action-1'] = 'approved';
+    state.stepIndex = 12; // action1-approved
     addAudit('action1Approved');
     render();
     await delay(1200);
@@ -196,6 +244,7 @@ async function runPhase3() {
         await simulateClick(action2Btn);
     }
     state.actionsStatus['action-2'] = 'approved';
+    state.stepIndex = 13; // action2-approved
     addAudit('action2Approved');
     render();
     await delay(1000);
@@ -206,8 +255,12 @@ async function runPhase4() {
     const overlay = document.getElementById('iphone-overlay');
     const iphone = document.getElementById('iphone-mockup');
 
+    state.stepIndex = 14; // exec-start
+    render();
+
     // Add first execution event
     await delay(800);
+    state.stepIndex = 15; // notify-1
     addAudit('execute1');
     render();
 
@@ -223,11 +276,13 @@ async function runPhase4() {
     await delay(1000);
     showTyping(false);
     state.outcomeIndex = 1;
+    state.stepIndex = 16; // outcome-1
     render();
     scrollToBottom('chat-container');
     await delay(1200);
 
     // Add second execution event and show second outcome message
+    state.stepIndex = 17; // notify-2
     addAudit('execute2');
     render();
 
@@ -235,6 +290,7 @@ async function runPhase4() {
     await delay(1000);
     showTyping(false);
     state.outcomeIndex = 2;
+    state.stepIndex = 18; // outcome-2
     render();
     scrollToBottom('chat-container');
     await delay(1500);
@@ -245,6 +301,7 @@ async function runPhase4() {
     if (overlay) overlay.classList.remove('visible');
 
     await delay(800);
+    state.stepIndex = 19; // complete
     addAudit('complete');
     render();
 
@@ -275,6 +332,141 @@ async function simulateClick(element) {
     await delay(150);
 }
 
+// ========== TIMELINE NAVIGATION ==========
+function jumpToStep(targetStep) {
+    // Stop any running demo
+    if (state.isPlaying) {
+        state.isPlaying = false;
+        state.isPaused = false;
+        if (state.pauseResolve) {
+            state.pauseResolve();
+            state.pauseResolve = null;
+        }
+    }
+    cursor.classList.remove('visible');
+
+    // Get overlay elements
+    const overlay = document.getElementById('iphone-overlay');
+    const iphone = document.getElementById('iphone-mockup');
+    if (overlay) overlay.classList.remove('visible');
+    if (iphone) iphone.classList.remove('visible');
+
+    // Set step and phase
+    state.stepIndex = targetStep;
+    state.phase = TIMELINE_STEPS[targetStep].phase;
+
+    // Reset base state
+    state.auditEvents = [];
+    state.actionsStatus = {};
+    state.scenario.actions.forEach(a => state.actionsStatus[a.id] = 'pending');
+
+    // Configure state based on step
+    // Phase 1 steps (0-3): scan-start, scan-p1, scan-p2, scan-flagged
+    if (targetStep <= 3) {
+        state.scanIndex = targetStep === 0 ? -1 : targetStep - 1;
+        state.chatIndex = 0;
+        state.outcomeIndex = 0;
+        state.issueDecided = false;
+        addAudit('scan');
+    }
+    // Phase 2 steps (4-9): chat-start, chat-m1 through chat-m5
+    else if (targetStep <= 9) {
+        state.scanIndex = 2; // flagged patient
+        state.chatIndex = targetStep === 4 ? 0 : targetStep - 4;
+        state.outcomeIndex = 0;
+        state.issueDecided = false;
+        addAudit('scan');
+        addAudit('patientStart');
+        if (targetStep === 9) addAudit('patientEnd');
+        // Show iPhone for chat
+        if (overlay) overlay.classList.add('visible');
+        if (iphone) iphone.classList.add('visible');
+    }
+    // Phase 3 steps (10-13): review-start, issue-agreed, action1-approved, action2-approved
+    else if (targetStep <= 13) {
+        state.scanIndex = 2;
+        state.chatIndex = 5;
+        state.outcomeIndex = 0;
+        addAudit('scan');
+        addAudit('patientStart');
+        addAudit('patientEnd');
+        addAudit('clinicianStart');
+
+        if (targetStep >= 11) {
+            state.issueDecided = true;
+            addAudit('issueAgreed');
+        } else {
+            state.issueDecided = false;
+        }
+        if (targetStep >= 12) {
+            state.actionsStatus['action-1'] = 'approved';
+            addAudit('action1Approved');
+        }
+        if (targetStep >= 13) {
+            state.actionsStatus['action-2'] = 'approved';
+            addAudit('action2Approved');
+        }
+    }
+    // Phase 4 steps (14-19): exec-start through complete
+    else {
+        state.scanIndex = 2;
+        state.chatIndex = 5;
+        state.issueDecided = true;
+        state.actionsStatus['action-1'] = 'approved';
+        state.actionsStatus['action-2'] = 'approved';
+        addAudit('scan');
+        addAudit('patientStart');
+        addAudit('patientEnd');
+        addAudit('clinicianStart');
+        addAudit('issueAgreed');
+        addAudit('action1Approved');
+        addAudit('action2Approved');
+
+        // Outcome index based on step
+        if (targetStep >= 18) {
+            state.outcomeIndex = 2;
+        } else if (targetStep >= 16) {
+            state.outcomeIndex = 1;
+        } else {
+            state.outcomeIndex = 0;
+        }
+
+        // Audit events for execution
+        if (targetStep >= 15) addAudit('execute1');
+        if (targetStep >= 17) addAudit('execute2');
+        if (targetStep >= 19) addAudit('complete');
+
+        // Show iPhone for outcome messages (steps 15-18)
+        if (targetStep >= 15 && targetStep <= 18) {
+            if (overlay) overlay.classList.add('visible');
+            if (iphone) iphone.classList.add('visible');
+        }
+    }
+
+    updatePlayPauseButton();
+    render();
+}
+
+function renderTimeline() {
+    const progressEl = document.getElementById('timeline-progress');
+    const markers = document.querySelectorAll('.timeline-marker');
+
+    // Calculate progress percentage (20 steps, 0-19)
+    const progress = (state.stepIndex / 19) * 100;
+    progressEl.style.width = `${progress}%`;
+
+    // Update marker states
+    markers.forEach(marker => {
+        const step = parseInt(marker.dataset.step);
+        marker.classList.remove('active', 'completed');
+        if (step === state.stepIndex) {
+            marker.classList.add('active');
+        } else if (step < state.stepIndex) {
+            marker.classList.add('completed');
+        }
+    });
+}
+
 // ========== RENDERING ==========
 function render() {
     renderPhaseProgress();
@@ -282,6 +474,7 @@ function render() {
     renderPhase2Content();
     renderPhase3Content();
     renderPhase4Content();
+    renderTimeline();
     updateStatus();
 
     // Show active phase
