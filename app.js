@@ -41,6 +41,9 @@ function resetDemo() {
     state.auditEvents = [];
     state.isPlaying = false;
     cursor.classList.remove('visible');
+    // Hide iPhone
+    const iphone = document.getElementById('iphone-mockup');
+    if (iphone) iphone.classList.remove('visible');
     document.getElementById('btn-play').disabled = false;
     render();
 }
@@ -49,30 +52,37 @@ async function startDemo() {
     if (state.isPlaying) return;
     state.isPlaying = true;
     document.getElementById('btn-play').disabled = true;
-    cursor.classList.add('visible');
 
-    // Phase 1: AI Scanning
+    // Phase 1: AI Scanning (no cursor)
     await runPhase1();
 
-    // Phase 2: Patient Chat
+    // Phase 2: Patient Chat (no cursor, iPhone popup)
     state.phase = 2;
     render();
+    await delay(300);
+    // Animate iPhone appearing
+    const iphone = document.getElementById('iphone-mockup');
+    if (iphone) iphone.classList.add('visible');
     await delay(500);
     await runPhase2();
+    // Hide iPhone before Phase 3
+    if (iphone) iphone.classList.remove('visible');
+    await delay(300);
 
-    // Phase 3: Clinician Review
+    // Phase 3: Clinician Review (with cursor)
     state.phase = 3;
     render();
     await delay(500);
+    cursor.classList.add('visible');
     await runPhase3();
+    cursor.classList.remove('visible');
 
-    // Phase 4: Execution
+    // Phase 4: Execution (no cursor)
     state.phase = 4;
     render();
     await delay(500);
     await runPhase4();
 
-    cursor.classList.remove('visible');
     state.isPlaying = false;
 }
 
@@ -84,20 +94,16 @@ async function runPhase1() {
         state.scanIndex = i;
         render();
 
-        // Move cursor to patient row
-        const row = document.querySelector(`[data-patient="${i}"]`);
-        if (row) await moveCursorTo(row);
-
-        await delay(600);
+        await delay(700);
 
         // Check if flagged
         if (PATIENT_LIST[i].status === 'flagged') {
-            await delay(800);
+            await delay(1000);
             break;
         }
     }
 
-    await delay(1000);
+    await delay(800);
 }
 
 // ========== PHASE 2: PATIENT CHAT ==========
@@ -285,7 +291,10 @@ function renderPhase1Content() {
 }
 
 function renderPhase2Content() {
-    const container = document.getElementById('chat-container');
+    const chatArea = document.getElementById('chat-container');
+    const container = chatArea.querySelector('.chat-container');
+    if (!container) return;
+
     const messages = state.scenario.patientChat.slice(0, state.chatIndex);
 
     container.innerHTML = messages.map(m => `
@@ -423,7 +432,10 @@ function updateStatus() {
 
 // ========== HELPERS ==========
 function showTyping(show) {
-    const container = document.getElementById('chat-container');
+    const chatArea = document.getElementById('chat-container');
+    const container = chatArea.querySelector('.chat-container');
+    if (!container) return;
+
     const existing = container.querySelector('.typing-indicator');
     if (existing) existing.parentElement.remove();
 

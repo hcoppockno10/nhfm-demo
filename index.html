@@ -44,17 +44,29 @@
                     </div>
                 </section>
 
-                <!-- Phase 2: Patient Chat -->
+                <!-- Phase 2: Patient Chat (iPhone) -->
                 <section id="phase-2" class="phase-container">
                     <div class="phase-header">
                         <h2>Patient Engagement</h2>
-                        <p>Information gathering via NHS App</p>
+                        <p>Patient receives message via NHS App on their phone</p>
                     </div>
-                    <div class="phase-body">
-                        <div class="warning-banner">
-                            <strong>Important:</strong> This is not an emergency service. This assistant gathers information only and cannot provide medical advice.
+                    <div class="phase-body iphone-container">
+                        <div id="iphone-mockup" class="iphone-mockup">
+                            <div class="iphone-screen">
+                                <div class="iphone-notch"></div>
+                                <div class="nhs-app-bar">
+                                    <span class="nhs-logo-small">NHS</span>
+                                    <span>NHS App</span>
+                                </div>
+                                <div class="iphone-warning">
+                                    This is not an emergency service. For emergencies, call 999.
+                                </div>
+                                <div id="chat-container" class="iphone-chat-area">
+                                    <div class="chat-container"></div>
+                                </div>
+                                <div class="iphone-home-indicator"></div>
+                            </div>
                         </div>
-                        <div id="chat-container" class="chat-container"></div>
                     </div>
                 </section>
 
