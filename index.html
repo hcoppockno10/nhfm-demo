@@ -44,32 +44,6 @@
                     </div>
                 </section>
 
-                <!-- Phase 2: Patient Chat (iPhone) -->
-                <section id="phase-2" class="phase-container">
-                    <div class="phase-header">
-                        <h2>Patient Engagement</h2>
-                        <p>Patient receives message via NHS App on their phone</p>
-                    </div>
-                    <div class="phase-body iphone-container">
-                        <div id="iphone-mockup" class="iphone-mockup">
-                            <div class="iphone-screen">
-                                <div class="iphone-notch"></div>
-                                <div class="nhs-app-bar">
-                                    <span class="nhs-logo-small">NHS</span>
-                                    <span>NHS App</span>
-                                </div>
-                                <div class="iphone-warning">
-                                    This is not an emergency service. For emergencies, call 999.
-                                </div>
-                                <div id="chat-container" class="iphone-chat-area">
-                                    <div class="chat-container"></div>
-                                </div>
-                                <div class="iphone-home-indicator"></div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
                 <!-- Phase 3: Clinician Review -->
                 <section id="phase-3" class="phase-container">
                     <div class="phase-header">
@@ -112,6 +86,26 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- iPhone Overlay (pops up over content) -->
+    <div id="iphone-overlay" class="iphone-overlay">
+        <div id="iphone-mockup" class="iphone-mockup">
+            <div class="iphone-screen">
+                <div class="iphone-notch"></div>
+                <div class="nhs-app-bar">
+                    <span class="nhs-logo-small">NHS</span>
+                    <span>NHS App</span>
+                </div>
+                <div class="iphone-warning">
+                    This is not an emergency service. For emergencies, call 999.
+                </div>
+                <div id="chat-container" class="iphone-chat-area">
+                    <div class="chat-container"></div>
+                </div>
+                <div class="iphone-home-indicator"></div>
+            </div>
+        </div>
     </div>
 
     <script src="scenarios.js"></script>

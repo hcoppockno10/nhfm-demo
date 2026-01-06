@@ -10,6 +10,8 @@ const state = {
     actionsStatus: {},
     auditEvents: [],
     isPlaying: false,
+    isPaused: false,
+    pauseResolve: null,
     scenario: null
 };
 
@@ -25,7 +27,7 @@ function init() {
     cursor.className = 'sim-cursor';
     document.body.appendChild(cursor);
 
-    document.getElementById('btn-play').addEventListener('click', startDemo);
+    document.getElementById('btn-play').addEventListener('click', handlePlayClick);
     document.getElementById('btn-reset').addEventListener('click', resetDemo);
 
     render();
@@ -40,39 +42,62 @@ function resetDemo() {
     state.scenario.actions.forEach(a => state.actionsStatus[a.id] = 'pending');
     state.auditEvents = [];
     state.isPlaying = false;
+    state.isPaused = false;
+    state.pauseResolve = null;
     cursor.classList.remove('visible');
-    // Hide iPhone
+    // Hide iPhone overlay
+    const overlay = document.getElementById('iphone-overlay');
     const iphone = document.getElementById('iphone-mockup');
+    if (overlay) overlay.classList.remove('visible');
     if (iphone) iphone.classList.remove('visible');
-    document.getElementById('btn-play').disabled = false;
+    updatePlayPauseButton();
     render();
+}
+
+function handlePlayClick() {
+    if (state.isPlaying) {
+        togglePause();
+    } else {
+        startDemo();
+    }
 }
 
 async function startDemo() {
     if (state.isPlaying) return;
     state.isPlaying = true;
-    document.getElementById('btn-play').disabled = true;
+    state.isPaused = false;
+    updatePlayPauseButton();
+
+    const overlay = document.getElementById('iphone-overlay');
+    const iphone = document.getElementById('iphone-mockup');
 
     // Phase 1: AI Scanning (no cursor)
     await runPhase1();
 
-    // Phase 2: Patient Chat (no cursor, iPhone popup)
+    // Phase 2: Patient Chat - iPhone pops up OVER patient list
     state.phase = 2;
-    render();
-    await delay(300);
-    // Animate iPhone appearing
-    const iphone = document.getElementById('iphone-mockup');
-    if (iphone) iphone.classList.add('visible');
+    renderPhaseProgress(); // Update sidebar to show Phase 2
+    updateStatus();
     await delay(500);
+
+    // Show iPhone overlay on top of patient screening
+    if (overlay) overlay.classList.add('visible');
+    await delay(200);
+    if (iphone) iphone.classList.add('visible');
+    await delay(600);
+
     await runPhase2();
-    // Hide iPhone before Phase 3
+
+    // Hide iPhone
     if (iphone) iphone.classList.remove('visible');
-    await delay(300);
+    await delay(400);
+    if (overlay) overlay.classList.remove('visible');
+    await delay(400);
 
     // Phase 3: Clinician Review (with cursor)
     state.phase = 3;
     render();
-    await delay(500);
+    await delay(600);
     cursor.classList.add('visible');
     await runPhase3();
     cursor.classList.remove('visible');
@@ -84,6 +109,8 @@ async function startDemo() {
     await runPhase4();
 
     state.isPlaying = false;
+    state.isPaused = false;
+    updatePlayPauseButton();
 }
 
 // ========== PHASE 1: AI SCANNING ==========
@@ -126,11 +153,11 @@ async function runPhase2() {
         render();
         scrollToBottom('chat-container');
 
-        await delay(800);
+        await delay(1200);
     }
 
     addAudit('patientEnd');
-    await delay(1200);
+    await delay(1800);
 }
 
 // ========== PHASE 3: CLINICIAN REVIEW ==========
@@ -224,8 +251,11 @@ function render() {
     updateStatus();
 
     // Show active phase
-    document.querySelectorAll('.phase-container').forEach((el, i) => {
-        el.classList.toggle('active', i + 1 === state.phase);
+    // Phase 2 uses phase-1 container (iPhone overlay shows on top)
+    document.querySelectorAll('.phase-container').forEach(el => {
+        const phaseNum = parseInt(el.id.split('-')[1]);
+        const activePhase = state.phase === 2 ? 1 : state.phase;
+        el.classList.toggle('active', phaseNum === activePhase);
     });
 }
 
@@ -474,8 +504,44 @@ function formatTime(date) {
     return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
-function delay(ms) {
+async function delay(ms) {
+    // If paused, wait until resumed
+    if (state.isPaused) {
+        await new Promise(resolve => {
+            state.pauseResolve = resolve;
+        });
+    }
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function togglePause() {
+    if (!state.isPlaying) return;
+
+    state.isPaused = !state.isPaused;
+    updatePlayPauseButton();
+
+    if (!state.isPaused && state.pauseResolve) {
+        state.pauseResolve();
+        state.pauseResolve = null;
+    }
+}
+
+function updatePlayPauseButton() {
+    const btn = document.getElementById('btn-play');
+    if (state.isPlaying && !state.isPaused) {
+        btn.innerHTML = '<span class="pause-icon"></span>Pause';
+        btn.classList.add('playing');
+        btn.classList.remove('paused');
+        btn.disabled = false;
+    } else if (state.isPlaying && state.isPaused) {
+        btn.innerHTML = '<span class="play-icon"></span>Resume';
+        btn.classList.remove('playing');
+        btn.classList.add('paused');
+        btn.disabled = false;
+    } else {
+        btn.innerHTML = '<span class="play-icon"></span>Play Demo';
+        btn.classList.remove('playing', 'paused');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', init);
