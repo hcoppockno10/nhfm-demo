@@ -94,16 +94,16 @@ async function runPhase1() {
         state.scanIndex = i;
         render();
 
-        await delay(700);
+        await delay(1000);
 
         // Check if flagged
         if (PATIENT_LIST[i].status === 'flagged') {
-            await delay(1000);
+            await delay(1500);
             break;
         }
     }
 
-    await delay(800);
+    await delay(1000);
 }
 
 // ========== PHASE 2: PATIENT CHAT ==========
@@ -118,7 +118,7 @@ async function runPhase2() {
         if (msg.role === 'assistant') {
             // Show typing indicator
             showTyping(true);
-            await delay(msg.delayMs || 700);
+            await delay(msg.delayMs || 1200);
             showTyping(false);
         }
 
@@ -126,17 +126,17 @@ async function runPhase2() {
         render();
         scrollToBottom('chat-container');
 
-        await delay(400);
+        await delay(800);
     }
 
     addAudit('patientEnd');
-    await delay(800);
+    await delay(1200);
 }
 
 // ========== PHASE 3: CLINICIAN REVIEW ==========
 async function runPhase3() {
     addAudit('clinicianStart');
-    await delay(600);
+    await delay(1000);
 
     // Move to issue card and click Agree
     const issueAgreeBtn = document.getElementById('issue-agree-btn');
@@ -147,7 +147,7 @@ async function runPhase3() {
     state.issueDecided = true;
     addAudit('issueAgreed');
     render();
-    await delay(600);
+    await delay(1200);
 
     // Approve first action
     const action1Btn = document.getElementById('action-1-approve');
@@ -158,7 +158,7 @@ async function runPhase3() {
     state.actionsStatus['action-1'] = 'approved';
     addAudit('action1Approved');
     render();
-    await delay(600);
+    await delay(1200);
 
     // Approve second action
     const action2Btn = document.getElementById('action-2-approve');
@@ -169,29 +169,34 @@ async function runPhase3() {
     state.actionsStatus['action-2'] = 'approved';
     addAudit('action2Approved');
     render();
-    await delay(800);
+    await delay(1000);
 }
 
 // ========== PHASE 4: EXECUTION ==========
 async function runPhase4() {
     // Add execution events with delays
-    await delay(500);
+    await delay(800);
     addAudit('execute1');
     render();
 
-    await delay(700);
+    await delay(1200);
     addAudit('execute2');
     render();
 
-    await delay(700);
+    await delay(1200);
     addAudit('complete');
     render();
 
-    await delay(500);
+    await delay(1000);
 }
 
 // ========== CURSOR SIMULATION ==========
 async function moveCursorTo(element) {
+    // Scroll element into view smoothly
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    await delay(400);
+
+    // Now get position and move cursor
     const rect = element.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
@@ -199,14 +204,14 @@ async function moveCursorTo(element) {
     cursor.style.left = x + 'px';
     cursor.style.top = y + 'px';
 
-    await delay(400);
+    await delay(600);
 }
 
 async function simulateClick(element) {
     cursor.classList.add('clicking');
-    await delay(150);
+    await delay(200);
     cursor.classList.remove('clicking');
-    await delay(100);
+    await delay(150);
 }
 
 // ========== RENDERING ==========
