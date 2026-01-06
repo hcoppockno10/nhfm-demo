@@ -414,48 +414,21 @@ function renderPhase3Content() {
 }
 
 function renderPhase4Content() {
-    const s = state.scenario;
-
-    // Audit timeline
     const timelineEl = document.getElementById('audit-timeline');
-    timelineEl.innerHTML = state.auditEvents.map(e => `
-        <div class="audit-event ${e.actor.toLowerCase()}">
-            <div class="audit-timestamp">${formatTime(e.timestamp)}</div>
+    timelineEl.innerHTML = state.auditEvents.map((e, i) => `
+        <div class="audit-event ${e.actor.toLowerCase()}" data-event="${i}">
             <span class="audit-actor ${e.actor.toLowerCase()}">${e.actor}</span>
             <div class="audit-text">${e.text}</div>
+            <div class="audit-timestamp">${formatTime(e.timestamp)}</div>
         </div>
     `).join('');
 
-    // Audit details
-    const detailsEl = document.getElementById('audit-details');
-    const dataHtml = s.dataAccessed.map(d => `<li><strong>${d.item}</strong> (${d.code})</li>`).join('');
-    const guardrailsHtml = s.guardrails.map(g => `<li>${g}</li>`).join('');
-
-    detailsEl.innerHTML = `
-        <h4>Data Accessed</h4>
-        <ul class="data-list">${dataHtml}</ul>
-        <h4 style="margin-top: 16px;">Safety Guardrails</h4>
-        <ul class="guardrails-list">${guardrailsHtml}</ul>
-    `;
-
-    // Notification preview
-    const notifEl = document.getElementById('notification-preview');
-    const approvedAction = s.actions.find(a => state.actionsStatus[a.id] === 'approved');
-
-    if (approvedAction && state.auditEvents.find(e => e.trigger === 'complete')) {
-        notifEl.innerHTML = `
-            <div class="notification-header">NHS App - Message Sent to Patient</div>
-            <div class="notification-body">${approvedAction.patientMessageDraft}</div>
-        `;
-        notifEl.style.opacity = '1';
-    } else {
-        notifEl.innerHTML = `
-            <div class="notification-header">NHS App Notification</div>
-            <div class="notification-body" style="color: #768692; font-style: italic;">
-                Patient notification will appear after execution...
-            </div>
-        `;
-        notifEl.style.opacity = '0.5';
+    // Scroll to latest event
+    if (state.auditEvents.length > 0) {
+        const lastEvent = timelineEl.querySelector(`[data-event="${state.auditEvents.length - 1}"]`);
+        if (lastEvent) {
+            lastEvent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 }
 

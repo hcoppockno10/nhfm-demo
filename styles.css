@@ -840,115 +840,66 @@ html, body {
 }
 
 /* Phase 4: Audit */
-.audit-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-}
-
 .audit-timeline {
-    position: relative;
-    padding-left: 20px;
-}
-
-.audit-timeline::before {
-    content: "";
-    position: absolute;
-    left: 6px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--nhs-pale-grey);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 700px;
+    margin: 0 auto;
 }
 
 .audit-event {
-    position: relative;
-    padding: 10px 0 10px 20px;
-    animation: fadeIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #fff;
+    border-radius: 6px;
+    border-left: 4px solid #768692;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    animation: slideIn 0.3s ease;
 }
 
-.audit-event::before {
-    content: "";
-    position: absolute;
-    left: -17px;
-    top: 14px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #768692;
-    border: 2px solid #fff;
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.audit-event.system::before { background: var(--nhs-blue); }
-.audit-event.assistant::before { background: var(--nhs-light-blue); }
-.audit-event.clinician::before { background: var(--nhs-dark-blue); }
-
-.audit-timestamp {
-    font-size: 0.688rem;
-    color: #768692;
-}
+.audit-event.system { border-left-color: var(--nhs-blue); }
+.audit-event.assistant { border-left-color: var(--nhs-light-blue); }
+.audit-event.clinician { border-left-color: var(--nhs-dark-blue); }
 
 .audit-actor {
-    display: inline-block;
-    padding: 2px 8px;
+    flex-shrink: 0;
+    padding: 3px 10px;
     border-radius: 4px;
-    font-size: 0.688rem;
-    font-weight: 500;
-    margin: 4px 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 .audit-actor.system { background: var(--nhs-pale-grey); color: var(--nhs-grey); }
 .audit-actor.assistant { background: #e0f2ff; color: var(--nhs-blue); }
 .audit-actor.clinician { background: var(--nhs-dark-blue); color: #fff; }
 
-.audit-text { font-size: 0.875rem; }
-
-.audit-details-panel {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 18px;
-}
-
-.audit-details-panel h4 {
+.audit-text {
+    flex: 1;
     font-size: 0.875rem;
-    color: var(--nhs-dark-blue);
-    margin-bottom: 12px;
+    color: #212b32;
 }
 
-.data-list, .guardrails-list {
-    list-style: none;
-    font-size: 0.813rem;
-}
-
-.data-list li, .guardrails-list li {
-    padding: 6px 0;
-    border-bottom: 1px solid var(--nhs-pale-grey);
-}
-
-.guardrails-list { margin-top: 16px; }
-.guardrails-list li { color: var(--nhs-green); }
-.guardrails-list li::before { content: "✓ "; font-weight: bold; }
-
-.notification-preview {
-    margin-top: 20px;
-    border: 2px solid var(--nhs-blue);
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.notification-header {
-    background: var(--nhs-blue);
-    color: #fff;
-    padding: 10px 14px;
-    font-size: 0.813rem;
-    font-weight: 500;
-}
-
-.notification-body {
-    padding: 14px;
-    font-size: 0.875rem;
-    line-height: 1.6;
+.audit-timestamp {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    color: #768692;
+    font-family: monospace;
 }
 
 /* Simulated Mouse Cursor */
@@ -1011,7 +962,6 @@ html, body {
 
 /* Responsive */
 @media (max-width: 900px) {
-    .audit-layout { grid-template-columns: 1fr; }
     .progress-sidebar { width: 200px; }
     .summary-grid { grid-template-columns: 1fr; }
 }
