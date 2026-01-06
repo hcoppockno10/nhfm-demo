@@ -414,12 +414,14 @@ function renderPhase3Content() {
 }
 
 function renderPhase4Content() {
+    if (state.phase !== 4) return;
+
     const timelineEl = document.getElementById('audit-timeline');
     timelineEl.innerHTML = state.auditEvents.map((e, i) => `
         <div class="audit-event ${e.actor.toLowerCase()}" data-event="${i}">
             <span class="audit-actor ${e.actor.toLowerCase()}">${e.actor}</span>
             <div class="audit-text">${e.text}</div>
-            <div class="audit-timestamp">${formatTime(e.timestamp)}</div>
+            <div class="audit-timestamp">${e.time}</div>
         </div>
     `).join('');
 
@@ -466,15 +468,8 @@ function scrollToBottom(id) {
 function addAudit(trigger) {
     const event = state.scenario.auditEvents.find(e => e.trigger === trigger);
     if (event) {
-        state.auditEvents.push({
-            ...event,
-            timestamp: new Date()
-        });
+        state.auditEvents.push({ ...event });
     }
-}
-
-function formatTime(date) {
-    return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
 async function delay(ms) {
