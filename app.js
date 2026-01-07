@@ -103,6 +103,8 @@ function resetDemo() {
     // Hide commentary and cancel any pending wait
     CommentarySystem.cancelWait();
     CommentarySystem.hide();
+    // Reset audit animation tracking
+    lastRenderedAuditCount = 0;
     updatePlayPauseButton();
     render();
 }
@@ -475,6 +477,7 @@ function jumpToStep(targetStep) {
     state.actionsStatus = {};
     state.scenario.actions.forEach(a => state.actionsStatus[a.id] = 'pending');
     state.patientResponses = { understood: false, appointmentBooked: false };
+    lastRenderedAuditCount = 0;
 
     // Configure state based on step
     // Phase 1 steps (0-4): scan-start, scan-p1, scan-p2, scan-flagged, info-required
@@ -863,17 +866,28 @@ function renderPhase3Content() {
     }).join('');
 }
 
+// Track how many audit events have been rendered to avoid re-animating
+let lastRenderedAuditCount = 0;
+
 function renderPhase4Content() {
     if (state.phase !== 4) return;
 
     const timelineEl = document.getElementById('audit-timeline');
-    timelineEl.innerHTML = state.auditEvents.map((e, i) => `
-        <div class="audit-event ${e.actor.toLowerCase()}" data-event="${i}">
-            <span class="audit-actor ${e.actor.toLowerCase()}">${e.actor}</span>
-            <div class="audit-text">${e.text}</div>
-            <div class="audit-timestamp">${e.time}</div>
-        </div>
-    `).join('');
+    const currentCount = state.auditEvents.length;
+
+    timelineEl.innerHTML = state.auditEvents.map((e, i) => {
+        // Only animate events that are newly added
+        const isNew = i >= lastRenderedAuditCount;
+        return `
+            <div class="audit-event ${e.actor.toLowerCase()}${isNew ? ' new' : ''}" data-event="${i}">
+                <span class="audit-actor ${e.actor.toLowerCase()}">${e.actor}</span>
+                <div class="audit-text">${e.text}</div>
+                <div class="audit-timestamp">${e.time}</div>
+            </div>
+        `;
+    }).join('');
+
+    lastRenderedAuditCount = currentCount;
 
     // Scroll to latest event
     if (state.auditEvents.length > 0) {

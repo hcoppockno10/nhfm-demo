@@ -1015,6 +1015,9 @@ html, body {
     border-radius: 6px;
     border-left: 4px solid #768692;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.audit-event.new {
     animation: slideIn 0.3s ease;
 }
 
