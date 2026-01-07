@@ -63,6 +63,9 @@ function init() {
     cursor.className = 'sim-cursor';
     document.body.appendChild(cursor);
 
+    // Initialize commentary system
+    CommentarySystem.init();
+
     document.getElementById('btn-play').addEventListener('click', handlePlayClick);
     document.getElementById('btn-reset').addEventListener('click', resetDemo);
 
@@ -97,6 +100,8 @@ function resetDemo() {
     const iphone = document.getElementById('iphone-mockup');
     if (overlay) overlay.classList.remove('visible');
     if (iphone) iphone.classList.remove('visible');
+    // Hide commentary
+    CommentarySystem.hide();
     updatePlayPauseButton();
     render();
 }
@@ -577,6 +582,9 @@ function render() {
         const activePhase = state.phase === 2 ? 1 : state.phase;
         el.classList.toggle('active', phaseNum === activePhase);
     });
+
+    // Update commentary for current step
+    CommentarySystem.showForStep(state.stepIndex);
 }
 
 function renderPhaseProgress() {
