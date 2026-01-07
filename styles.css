@@ -1001,6 +1001,70 @@ html, body {
     resize: none;
 }
 
+/* Modify Input Area (for action modifications) */
+.modify-input-area {
+    margin-top: 12px;
+    padding: 14px;
+    background: #fffef0;
+    border: 1px solid var(--nhs-yellow);
+    border-radius: 6px;
+}
+
+.modify-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--nhs-grey);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.modify-textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--nhs-yellow);
+    border-radius: 4px;
+    font-family: var(--font);
+    font-size: 0.875rem;
+    resize: none;
+    background: #fff;
+}
+
+.modify-textarea:focus {
+    outline: none;
+    border-color: var(--nhs-blue);
+    box-shadow: 0 0 0 3px rgba(0, 94, 184, 0.15);
+}
+
+.modify-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.btn-cancel-modify {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: var(--nhs-grey);
+    transition: all 0.2s;
+}
+
+.btn-cancel-modify:hover {
+    background: var(--nhs-pale-grey);
+}
+
+.action-card.modifying {
+    border-color: var(--nhs-yellow);
+    border-left-color: var(--nhs-yellow);
+    background: #fffef8;
+}
+
 /* Action Cards List */
 .action-cards-list {
     display: flex;
@@ -1029,6 +1093,12 @@ html, body {
     border-left-color: var(--nhs-red);
     background: #fef2f2;
     opacity: 0.6;
+}
+
+.action-card.modified {
+    border-color: var(--nhs-green);
+    border-left-color: var(--nhs-yellow);
+    background: #fffef0;
 }
 
 .action-header {

@@ -394,7 +394,10 @@ const NSAID_CKD_SCENARIO = {
             impact: "MEDIUM",
             rationale: "Monitor for eGFR stabilisation after NSAID cessation.",
             evidence: ["Repeat eGFR needed to confirm cause", "Early detection if decline continues"],
-            patientMessageDraft: "We have arranged a follow-up blood test in 2 weeks to check your kidney function. You will receive an appointment notification."
+            patientMessageDraft: "We have arranged a follow-up blood test in 2 weeks to check your kidney function. You will receive an appointment notification.",
+            // Modified version after clinician review
+            modifiedTitle: "Schedule renal function recheck in 1 week",
+            modifiedPatientMessageDraft: "We have arranged a follow-up blood test in 1 week to check your kidney function. You will receive an appointment notification."
         }
     ],
 
@@ -405,12 +408,12 @@ const NSAID_CKD_SCENARIO = {
         { trigger: "clinicianStart", actor: "NHFM", text: "Case escalated to clinician for review", time: "06 Jan, 10:52" },
         { trigger: "issueAgreed", actor: "Clinician", text: "Clinician agreed with flagged issue assessment", time: "06 Jan, 14:32" },
         { trigger: "action1Approved", actor: "Clinician", text: "Approved: Advise patient to discontinue NSAID", time: "06 Jan, 14:33" },
-        { trigger: "action2Approved", actor: "Clinician", text: "Approved: Schedule renal function recheck", time: "06 Jan, 14:34" },
+        { trigger: "action2Modified", actor: "Clinician", text: "Modified: Schedule renal function recheck (2 weeks → 1 week)", time: "06 Jan, 14:34" },
         { trigger: "execute1", actor: "NHFM", text: "Patient notification sent via NHS App", time: "06 Jan, 14:34" },
-        { trigger: "patientConfirmStop", actor: "Patient", text: "Patient confirmed: Will stop taking ibuprofen", time: "06 Jan, 14:36" },
-        { trigger: "execute2", actor: "NHFM", text: "Pathology order placed for 2-week follow-up", time: "06 Jan, 14:37" },
-        { trigger: "patientBookedAppt", actor: "Patient", text: "Patient booked blood test: 20 Jan, 09:15 at Parkside Medical Centre", time: "06 Jan, 14:38" },
-        { trigger: "complete", actor: "NHFM", text: "Workflow complete. Case closed.", time: "06 Jan, 14:40" }
+        { trigger: "patientConfirmStop", actor: "Patient", text: "Patient confirmed: Will stop taking ibuprofen", time: "07 Jan, 10:36" },
+        { trigger: "execute2", actor: "NHFM", text: "Pathology order placed for 1-week follow-up", time: "07 Jan, 10:36" },
+        { trigger: "patientBookedAppt", actor: "Patient", text: "Patient booked blood test: 13 Jan, 09:15 at Parkside Medical Centre", time: "07 Jan, 10:38" },
+        { trigger: "complete", actor: "NHFM", text: "Workflow complete. Case closed.", time: "07 Jan, 10:40" }
     ],
 
     guardrails: [

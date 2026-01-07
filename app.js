@@ -48,7 +48,10 @@ const state = {
     patientResponses: {
         understood: false,
         appointmentBooked: false
-    }
+    },
+    // Track which action is being modified (shows input)
+    modifyingAction: null,
+    modifyText: ''
 };
 
 // Simulated cursor element
@@ -94,6 +97,8 @@ function resetDemo() {
     state.isPaused = false;
     state.pauseResolve = null;
     state.patientResponses = { understood: false, appointmentBooked: false };
+    state.modifyingAction = null;
+    state.modifyText = '';
     cursor.classList.remove('visible');
     // Hide iPhone overlay
     const overlay = document.getElementById('iphone-overlay');
@@ -311,18 +316,50 @@ async function runPhase3() {
         await delay(1800); // 1200 * 1.5
     }
 
-    // Step 14: action2-approved
+    // Step 14: action2-modified (clinician changes 2 weeks to 1 week)
     if (startStep <= 14) {
-        const action2Btn = document.getElementById('action-2-approve');
-        if (action2Btn) {
-            await moveCursorTo(action2Btn);
-            await simulateClick(action2Btn);
+        // Click the Modify button
+        const action2ModifyBtn = document.getElementById('action-2-modify');
+        if (action2ModifyBtn) {
+            await moveCursorTo(action2ModifyBtn);
+            await simulateClick(action2ModifyBtn);
         }
-        state.actionsStatus['action-2'] = 'approved';
-        state.stepIndex = 14;
-        addAudit('action2Approved');
+
+        // Show the modify input
+        state.modifyingAction = 'action-2';
+        state.modifyText = '';
         render();
-        await delay(1500); // 1000 * 1.5
+        await delay(600);
+
+        // Type the modification request character by character
+        const modifyText = 'Change to 1 week follow-up';
+        const textarea = document.getElementById('action-2-modify-text');
+        if (textarea) {
+            await moveCursorTo(textarea);
+            textarea.focus();
+            for (const char of modifyText) {
+                state.modifyText += char;
+                textarea.value = state.modifyText;
+                await delay(50); // Typing speed
+            }
+        }
+        await delay(800);
+
+        // Click Apply Change
+        const applyBtn = document.getElementById('action-2-apply-modify');
+        if (applyBtn) {
+            await moveCursorTo(applyBtn);
+            await simulateClick(applyBtn);
+        }
+
+        // Apply the modification
+        state.modifyingAction = null;
+        state.modifyText = '';
+        state.actionsStatus['action-2'] = 'modified';
+        state.stepIndex = 14;
+        addAudit('action2Modified');
+        render();
+        await delay(1500);
     }
 }
 
@@ -522,8 +559,8 @@ function jumpToStep(targetStep) {
             addAudit('action1Approved');
         }
         if (targetStep >= 14) {
-            state.actionsStatus['action-2'] = 'approved';
-            addAudit('action2Approved');
+            state.actionsStatus['action-2'] = 'modified';
+            addAudit('action2Modified');
         }
     }
     // Phase 4 steps (15-20): exec-start through complete
@@ -532,14 +569,14 @@ function jumpToStep(targetStep) {
         state.chatIndex = 5;
         state.issueDecided = true;
         state.actionsStatus['action-1'] = 'approved';
-        state.actionsStatus['action-2'] = 'approved';
+        state.actionsStatus['action-2'] = 'modified';
         addAudit('scan');
         addAudit('patientStart');
         addAudit('patientEnd');
         addAudit('clinicianStart');
         addAudit('issueAgreed');
         addAudit('action1Approved');
-        addAudit('action2Approved');
+        addAudit('action2Modified');
 
         // Outcome index based on step
         if (targetStep >= 19) {
@@ -618,7 +655,7 @@ function render() {
 
 function renderPhaseProgress() {
     const phases = [
-        { title: 'AI Review', desc: 'Patient screening' },
+        { title: 'NHFM Review', desc: 'Autonomous patient screening' },
         { title: 'Patient Chat', desc: 'Information gathering' },
         { title: 'Clinician Review', desc: 'Review & approval' },
         { title: 'Execution', desc: 'Action & audit' }
@@ -838,7 +875,7 @@ function renderPhase3Content() {
 
     // Action cards
     const actionsEl = document.getElementById('action-cards');
-    const approvedCount = Object.values(state.actionsStatus).filter(s => s === 'approved').length;
+    const approvedCount = Object.values(state.actionsStatus).filter(s => s === 'approved' || s === 'modified').length;
     const totalActions = s.actions.length;
 
     // Update actions count badge
@@ -850,27 +887,51 @@ function renderPhase3Content() {
 
     actionsEl.innerHTML = s.actions.map(a => {
         const status = state.actionsStatus[a.id];
-        const cardClass = status !== 'pending' ? status : '';
+        const isModifying = state.modifyingAction === a.id;
+        const cardClass = status !== 'pending' ? status : (isModifying ? 'modifying' : '');
+
+        // Use modified title/message if action was modified and has modified versions
+        const isModified = status === 'modified';
+        const displayTitle = (isModified && a.modifiedTitle) ? a.modifiedTitle : a.title;
+        const displayMessage = (isModified && a.modifiedPatientMessageDraft) ? a.modifiedPatientMessageDraft : a.patientMessageDraft;
+
+        // Build the buttons/status area
+        let buttonsHtml;
+        if (isModifying) {
+            buttonsHtml = `
+                <div class="modify-input-area">
+                    <label class="modify-label">Clinician modification request:</label>
+                    <textarea id="${a.id}-modify-text" class="modify-textarea" rows="2" placeholder="Enter modification...">${state.modifyText}</textarea>
+                    <div class="modify-actions">
+                        <button id="${a.id}-apply-modify" class="btn-agree">Apply Change</button>
+                        <button class="btn-cancel-modify">Cancel</button>
+                    </div>
+                </div>
+            `;
+        } else if (status === 'pending') {
+            buttonsHtml = `
+                <div class="decision-buttons">
+                    <button id="${a.id}-approve" class="btn-agree">Approve</button>
+                    <button class="btn-reject-decision">Reject</button>
+                    <button id="${a.id}-modify" class="btn-modify">Modify</button>
+                </div>
+            `;
+        } else {
+            buttonsHtml = `<span class="decision-status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
+        }
 
         return `
             <div class="action-card ${cardClass}">
                 <div class="action-header">
-                    <h4>${a.title}</h4>
+                    <h4>${displayTitle}</h4>
                     <span class="impact-badge ${a.impact.toLowerCase()}">${a.impact}</span>
                 </div>
                 <p class="action-rationale">${a.rationale}</p>
                 <div class="message-preview">
                     <div class="message-preview-label">Patient message draft:</div>
-                    ${a.patientMessageDraft}
+                    ${displayMessage}
                 </div>
-                ${status === 'pending'
-                    ? `<div class="decision-buttons">
-                        <button id="${a.id}-approve" class="btn-agree">Approve</button>
-                        <button class="btn-reject-decision">Reject</button>
-                        <button class="btn-modify">Modify</button>
-                    </div>`
-                    : `<span class="decision-status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`
-                }
+                ${buttonsHtml}
             </div>
         `;
     }).join('');
