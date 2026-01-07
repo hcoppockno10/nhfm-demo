@@ -17,45 +17,45 @@ const COMMENTARY_CONFIG = {
             targetSelector: '.patient-row.flagged',
             position: 'right',
             title: 'Safety Alert Detected',
-            text: 'NHFM has detected that this patient is taking NSAIDs while showing declining kidney function - a known safety concern per NICE guidelines.'
+            text: 'NHFM has detected declining kidney function. There is no record of NSAID use (known safety concern per NICE guidelines) in the records but NHFM flags for further investigation.'
         },
         {
             step: 4,
             targetSelector: '#iphone-mockup',
             position: 'left',
             title: 'Patient Engagement',
-            text: 'Rather than alerting the patient directly about a clinical concern, MedGuard gathers information through natural conversation to confirm the situation.'
+            text: 'NHFM can interact with patients through the NHS app in a heavily guardrailed chat interface. It can gather information but never provide medical advice without clinician oversight.'
         },
         {
-            step: 8,
+            step: 9,
             targetSelector: '#iphone-mockup',
             position: 'left',
             title: 'Critical Information',
             text: 'The patient reveals over-the-counter ibuprofen use - information not in their medical record but crucial for clinical decision-making.'
         },
         {
-            step: 10,
+            step: 11,
             targetSelector: '#issue-card',
             position: 'right',
             title: 'Human-in-the-Loop',
-            text: 'All clinical decisions require explicit clinician approval. The AI presents evidence but never acts autonomously on patient care.'
+            text: 'All clinical decisions and actions require explicit clinician approval..'
         },
         {
-            step: 11,
+            step: 12,
             targetSelector: '.decision-status.agreed',
             position: 'right',
             title: 'Clinician Validation',
             text: 'The clinician reviews the AI assessment and confirms agreement. This creates an auditable record of human oversight.'
         },
         {
-            step: 12,
+            step: 13,
             targetSelector: '#action-1-approve',
             position: 'right',
             title: 'Approval Required',
             text: 'The AI agent wants to contact the patient to advise them to stop taking ibuprofen. Before any message is sent, the clinician must review and approve the action.'
         },
         {
-            step: 14,
+            step: 15,
             targetSelector: '#audit-timeline',
             position: 'top',
             title: 'Execution & Audit Trail',
@@ -176,6 +176,11 @@ const CommentarySystem = {
             this.nextResolve = null;
         }
         this.hide();
+
+        // If demo isn't playing, start it
+        if (typeof state !== 'undefined' && !state.isPlaying) {
+            startDemo();
+        }
     },
 
     // Returns a promise that resolves when user clicks Next

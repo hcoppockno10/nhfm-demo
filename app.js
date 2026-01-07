@@ -196,7 +196,7 @@ async function runPhase1() {
         state.stepIndex = 0;
         addAudit('scan');
         render();
-        await waitForCommentary();
+        // Don't wait for commentary at step 0 - it was already shown before demo started
     }
 
     // Start from current position (or 0 if before this phase)
@@ -254,8 +254,8 @@ async function runPhase2() {
         render();
         scrollToBottom('chat-container');
 
-        // Check for commentary at step 8 (critical information about ibuprofen)
-        if (state.stepIndex === 8) {
+        // Check for commentary at step 9 (patient reveals ibuprofen use)
+        if (state.stepIndex === 9) {
             await waitForCommentary();
         }
 
@@ -270,12 +270,12 @@ async function runPhase2() {
 async function runPhase3() {
     const startStep = state.stepIndex;
 
-    // Step 11: review-start (commentary: Human-in-the-Loop at step 10, shown when entering phase 3)
+    // Step 11: review-start
     if (startStep <= 11) {
         state.stepIndex = 11;
         addAudit('clinicianStart');
         render();
-        await waitForCommentary(); // Step 10/11: Human-in-the-Loop
+        await waitForCommentary(); // Step 11: Human-in-the-Loop
         await delay(1500); // 1000 * 1.5
     }
 
@@ -290,7 +290,7 @@ async function runPhase3() {
         state.stepIndex = 12;
         addAudit('issueAgreed');
         render();
-        await waitForCommentary(); // Step 11/12: Clinician Validation
+        await waitForCommentary(); // Step 12: Clinician Validation
         await delay(1800); // 1200 * 1.5
     }
 
@@ -305,7 +305,7 @@ async function runPhase3() {
         state.stepIndex = 13;
         addAudit('action1Approved');
         render();
-        await waitForCommentary(); // Step 12: Approval Required
+        await waitForCommentary(); // Step 13: Approval Required
         await delay(1800); // 1200 * 1.5
     }
 
@@ -320,7 +320,6 @@ async function runPhase3() {
         state.stepIndex = 14;
         addAudit('action2Approved');
         render();
-        await waitForCommentary(); // Step 14: Execution & Audit Trail
         await delay(1500); // 1000 * 1.5
     }
 }
@@ -335,6 +334,7 @@ async function runPhase4() {
     if (startStep <= 15) {
         state.stepIndex = 15;
         render();
+        await waitForCommentary(); // Step 15: Execution & Audit Trail
         await delay(1200); // 800 * 1.5
     }
 
