@@ -2,13 +2,14 @@
  * MedGuard Demo - Auto-Play with Simulated Mouse
  */
 
-// Timeline steps definition (20 total)
+// Timeline steps definition (21 total)
 const TIMELINE_STEPS = [
-    // Phase 1: AI Scanning (4 steps)
+    // Phase 1: AI Scanning (5 steps)
     { id: 'scan-start', phase: 1, label: 'Scan Start' },
     { id: 'scan-p1', phase: 1, label: 'Patient 1' },
     { id: 'scan-p2', phase: 1, label: 'Patient 2' },
     { id: 'scan-flagged', phase: 1, label: 'Flagged' },
+    { id: 'info-required', phase: 1, label: 'Info Required' },
     // Phase 2: Patient Chat (6 steps)
     { id: 'chat-start', phase: 2, label: 'Chat Start' },
     { id: 'chat-m1', phase: 2, label: 'Greeting' },
@@ -188,11 +189,15 @@ async function runPhase1() {
 
         if (PATIENT_LIST[i].status === 'flagged') {
             await delay(1500);
+            // Show "info required" step
+            state.stepIndex = 4; // info-required
+            render();
+            await delay(1500);
             break;
         }
     }
 
-    await delay(1000);
+    await delay(500);
 }
 
 // ========== PHASE 2: PATIENT CHAT ==========
@@ -200,15 +205,15 @@ async function runPhase2() {
     const startStep = state.stepIndex;
 
     // Only init if starting fresh in this phase
-    if (startStep <= 4) {
-        state.stepIndex = 4;
+    if (startStep <= 5) {
+        state.stepIndex = 5;
         addAudit('patientStart');
         render();
     }
 
     const messages = state.scenario.patientChat;
-    // Start from current message (steps 5-9 map to messages 0-4)
-    const startMsg = startStep <= 4 ? 0 : Math.min(startStep - 5, messages.length - 1);
+    // Start from current message (steps 6-10 map to messages 0-4)
+    const startMsg = startStep <= 5 ? 0 : Math.min(startStep - 6, messages.length - 1);
 
     for (let i = startMsg; i < messages.length; i++) {
         const msg = messages[i];
@@ -220,7 +225,7 @@ async function runPhase2() {
         }
 
         state.chatIndex = i + 1;
-        state.stepIndex = 5 + i;
+        state.stepIndex = 6 + i;
         render();
         scrollToBottom('chat-container');
 
@@ -235,51 +240,51 @@ async function runPhase2() {
 async function runPhase3() {
     const startStep = state.stepIndex;
 
-    // Step 10: review-start
-    if (startStep <= 10) {
-        state.stepIndex = 10;
+    // Step 11: review-start
+    if (startStep <= 11) {
+        state.stepIndex = 11;
         addAudit('clinicianStart');
         render();
         await delay(1000);
     }
 
-    // Step 11: issue-agreed
-    if (startStep <= 11) {
+    // Step 12: issue-agreed
+    if (startStep <= 12) {
         const issueAgreeBtn = document.getElementById('issue-agree-btn');
         if (issueAgreeBtn) {
             await moveCursorTo(issueAgreeBtn);
             await simulateClick(issueAgreeBtn);
         }
         state.issueDecided = true;
-        state.stepIndex = 11;
+        state.stepIndex = 12;
         addAudit('issueAgreed');
         render();
         await delay(1200);
     }
 
-    // Step 12: action1-approved
-    if (startStep <= 12) {
+    // Step 13: action1-approved
+    if (startStep <= 13) {
         const action1Btn = document.getElementById('action-1-approve');
         if (action1Btn) {
             await moveCursorTo(action1Btn);
             await simulateClick(action1Btn);
         }
         state.actionsStatus['action-1'] = 'approved';
-        state.stepIndex = 12;
+        state.stepIndex = 13;
         addAudit('action1Approved');
         render();
         await delay(1200);
     }
 
-    // Step 13: action2-approved
-    if (startStep <= 13) {
+    // Step 14: action2-approved
+    if (startStep <= 14) {
         const action2Btn = document.getElementById('action-2-approve');
         if (action2Btn) {
             await moveCursorTo(action2Btn);
             await simulateClick(action2Btn);
         }
         state.actionsStatus['action-2'] = 'approved';
-        state.stepIndex = 13;
+        state.stepIndex = 14;
         addAudit('action2Approved');
         render();
         await delay(1000);
@@ -292,16 +297,16 @@ async function runPhase4() {
     const iphone = document.getElementById('iphone-mockup');
     const startStep = state.stepIndex;
 
-    // Step 14: exec-start
-    if (startStep <= 14) {
-        state.stepIndex = 14;
+    // Step 15: exec-start
+    if (startStep <= 15) {
+        state.stepIndex = 15;
         render();
         await delay(800);
     }
 
-    // Step 15: notify-1
-    if (startStep <= 15) {
-        state.stepIndex = 15;
+    // Step 16: notify-1
+    if (startStep <= 16) {
+        state.stepIndex = 16;
         addAudit('execute1');
         render();
         await delay(600);
@@ -311,32 +316,32 @@ async function runPhase4() {
         await delay(600);
     }
 
-    // Step 16: outcome-1
-    if (startStep <= 16) {
+    // Step 17: outcome-1
+    if (startStep <= 17) {
         showTyping(true);
         await delay(1000);
         showTyping(false);
         state.outcomeIndex = 1;
-        state.stepIndex = 16;
+        state.stepIndex = 17;
         render();
         scrollToBottom('chat-container');
         await delay(1200);
     }
 
-    // Step 17: notify-2
-    if (startStep <= 17) {
-        state.stepIndex = 17;
+    // Step 18: notify-2
+    if (startStep <= 18) {
+        state.stepIndex = 18;
         addAudit('execute2');
         render();
     }
 
-    // Step 18: outcome-2
-    if (startStep <= 18) {
+    // Step 19: outcome-2
+    if (startStep <= 19) {
         showTyping(true);
         await delay(1000);
         showTyping(false);
         state.outcomeIndex = 2;
-        state.stepIndex = 18;
+        state.stepIndex = 19;
         render();
         scrollToBottom('chat-container');
         await delay(1500);
@@ -348,7 +353,7 @@ async function runPhase4() {
     if (overlay) overlay.classList.remove('visible');
 
     await delay(800);
-    state.stepIndex = 19;
+    state.stepIndex = 20;
     addAudit('complete');
     render();
 
@@ -408,29 +413,29 @@ function jumpToStep(targetStep) {
     state.scenario.actions.forEach(a => state.actionsStatus[a.id] = 'pending');
 
     // Configure state based on step
-    // Phase 1 steps (0-3): scan-start, scan-p1, scan-p2, scan-flagged
-    if (targetStep <= 3) {
-        state.scanIndex = targetStep === 0 ? -1 : targetStep - 1;
+    // Phase 1 steps (0-4): scan-start, scan-p1, scan-p2, scan-flagged, info-required
+    if (targetStep <= 4) {
+        state.scanIndex = targetStep === 0 ? -1 : Math.min(targetStep - 1, 2);
         state.chatIndex = 0;
         state.outcomeIndex = 0;
         state.issueDecided = false;
         addAudit('scan');
     }
-    // Phase 2 steps (4-9): chat-start, chat-m1 through chat-m5
-    else if (targetStep <= 9) {
+    // Phase 2 steps (5-10): chat-start, chat-m1 through chat-m5
+    else if (targetStep <= 10) {
         state.scanIndex = 2; // flagged patient
-        state.chatIndex = targetStep === 4 ? 0 : targetStep - 4;
+        state.chatIndex = targetStep === 5 ? 0 : targetStep - 5;
         state.outcomeIndex = 0;
         state.issueDecided = false;
         addAudit('scan');
         addAudit('patientStart');
-        if (targetStep === 9) addAudit('patientEnd');
+        if (targetStep === 10) addAudit('patientEnd');
         // Show iPhone for chat
         if (overlay) overlay.classList.add('visible');
         if (iphone) iphone.classList.add('visible');
     }
-    // Phase 3 steps (10-13): review-start, issue-agreed, action1-approved, action2-approved
-    else if (targetStep <= 13) {
+    // Phase 3 steps (11-14): review-start, issue-agreed, action1-approved, action2-approved
+    else if (targetStep <= 14) {
         state.scanIndex = 2;
         state.chatIndex = 5;
         state.outcomeIndex = 0;
@@ -439,22 +444,22 @@ function jumpToStep(targetStep) {
         addAudit('patientEnd');
         addAudit('clinicianStart');
 
-        if (targetStep >= 11) {
+        if (targetStep >= 12) {
             state.issueDecided = true;
             addAudit('issueAgreed');
         } else {
             state.issueDecided = false;
         }
-        if (targetStep >= 12) {
+        if (targetStep >= 13) {
             state.actionsStatus['action-1'] = 'approved';
             addAudit('action1Approved');
         }
-        if (targetStep >= 13) {
+        if (targetStep >= 14) {
             state.actionsStatus['action-2'] = 'approved';
             addAudit('action2Approved');
         }
     }
-    // Phase 4 steps (14-19): exec-start through complete
+    // Phase 4 steps (15-20): exec-start through complete
     else {
         state.scanIndex = 2;
         state.chatIndex = 5;
@@ -470,21 +475,21 @@ function jumpToStep(targetStep) {
         addAudit('action2Approved');
 
         // Outcome index based on step
-        if (targetStep >= 18) {
+        if (targetStep >= 19) {
             state.outcomeIndex = 2;
-        } else if (targetStep >= 16) {
+        } else if (targetStep >= 17) {
             state.outcomeIndex = 1;
         } else {
             state.outcomeIndex = 0;
         }
 
         // Audit events for execution
-        if (targetStep >= 15) addAudit('execute1');
-        if (targetStep >= 17) addAudit('execute2');
-        if (targetStep >= 19) addAudit('complete');
+        if (targetStep >= 16) addAudit('execute1');
+        if (targetStep >= 18) addAudit('execute2');
+        if (targetStep >= 20) addAudit('complete');
 
-        // Show iPhone for outcome messages (steps 15-18)
-        if (targetStep >= 15 && targetStep <= 18) {
+        // Show iPhone for outcome messages (steps 16-19)
+        if (targetStep >= 16 && targetStep <= 19) {
             if (overlay) overlay.classList.add('visible');
             if (iphone) iphone.classList.add('visible');
         }
@@ -498,8 +503,8 @@ function renderTimeline() {
     const progressEl = document.getElementById('timeline-progress');
     const markers = document.querySelectorAll('.timeline-marker');
 
-    // Calculate progress percentage (20 steps, 0-19)
-    const progress = (state.stepIndex / 19) * 100;
+    // Calculate progress percentage (21 steps, 0-20)
+    const progress = (state.stepIndex / 20) * 100;
     progressEl.style.width = `${progress}%`;
 
     // Update marker states
@@ -562,7 +567,9 @@ function renderPhaseProgress() {
 
 function renderPhase1Content() {
     const container = document.getElementById('patient-list');
-    container.innerHTML = PATIENT_LIST.map((p, i) => {
+
+    // Create patient rows HTML
+    let patientsHtml = PATIENT_LIST.map((p, i) => {
         let rowClass = 'patient-row';
         let statusClass = 'pending';
         let statusText = 'Pending';
@@ -574,29 +581,64 @@ function renderPhase1Content() {
             statusText = p.status === 'flagged' ? 'Flagged' : 'OK';
             scanResult = p.scanResult;
         } else if (i === state.scanIndex) {
-            rowClass += ' scanning';
-            statusClass = 'scanning';
-            statusText = 'Scanning...';
-            if (p.status === 'flagged' && state.phase > 1) {
-                rowClass = 'patient-row flagged';
+            // Show flagged state if past Phase 1 OR at info-required step (step 4)
+            const showFlagged = p.status === 'flagged' && (state.phase > 1 || state.stepIndex >= 4);
+            if (showFlagged) {
+                rowClass += ' flagged';
                 statusClass = 'flagged';
                 statusText = 'Flagged';
                 scanResult = p.scanResult;
+            } else {
+                rowClass += ' scanning';
+                statusClass = 'scanning';
+                statusText = 'Scanning...';
             }
         }
+
+        const showAction = p.actionRequired && scanResult && p.status === 'flagged';
 
         return `
             <div class="${rowClass}" data-patient="${i}">
                 <div class="patient-avatar">${p.initials}</div>
                 <div class="patient-info">
-                    <h4>${p.initials} (${p.age})</h4>
-                    <p>${p.summary}</p>
+                    <div class="patient-header">
+                        <h4>${p.fullName || p.initials}</h4>
+                        <span class="patient-meta">${p.age}${p.gender ? p.gender[0] : ''} · NHS: ${p.nhsNumber || 'N/A'}</span>
+                    </div>
                     ${scanResult ? `<div class="scan-result ${p.status === 'flagged' ? 'alert' : ''}">${scanResult}</div>` : ''}
+                    ${showAction ? `<div class="action-required">${p.actionRequired}</div>` : ''}
                 </div>
                 <span class="patient-status ${statusClass}">${statusText}</span>
             </div>
         `;
     }).join('');
+
+    // Add "ghost" patients at the end to create infinite scroll illusion
+    const ghostPatients = [
+        { initials: "O.W.", fullName: "Oliver Watson", nhsNumber: "624 853 1947", age: 49, gender: "Male" },
+        { initials: "E.R.", fullName: "Emma Roberts", nhsNumber: "781 432 6589", age: 56, gender: "Female" },
+        { initials: "J.B.", fullName: "John Bradley", nhsNumber: "935 167 4823", age: 73, gender: "Male" },
+        { initials: "M.K.", fullName: "Maria Khan", nhsNumber: "412 698 3571", age: 62, gender: "Female" },
+        { initials: "D.S.", fullName: "Daniel Smith", nhsNumber: "567 284 9136", age: 44, gender: "Male" },
+        { initials: "S.L.", fullName: "Sarah Lawrence", nhsNumber: "893 541 2678", age: 38, gender: "Female" },
+        { initials: "R.T.", fullName: "Richard Turner", nhsNumber: "246 879 5314", age: 67, gender: "Male" },
+        { initials: "L.H.", fullName: "Lucy Harris", nhsNumber: "718 395 6842", age: 51, gender: "Female" }
+    ];
+
+    patientsHtml += ghostPatients.map((p, i) => `
+        <div class="patient-row ghost-patient" data-ghost="${i}">
+            <div class="patient-avatar">${p.initials}</div>
+            <div class="patient-info">
+                <div class="patient-header">
+                    <h4>${p.fullName}</h4>
+                    <span class="patient-meta">${p.age}${p.gender[0]} · NHS: ${p.nhsNumber}</span>
+                </div>
+            </div>
+            <span class="patient-status pending">Pending</span>
+        </div>
+    `).join('');
+
+    container.innerHTML = patientsHtml;
 }
 
 function renderPhase2Content() {
@@ -656,7 +698,13 @@ function renderPhase3Content() {
     // Issue card
     const issueEl = document.getElementById('issue-card');
     const issue = s.issue;
-    const evidenceHtml = issue.evidence.map(e => `<li>${e}</li>`).join('');
+    const evidenceHtml = issue.evidence.map(e => {
+        if (typeof e === 'string') {
+            return `<li>${e}</li>`;
+        } else {
+            return `<li>${e.text} <span class="evidence-source">via ${e.source}</span></li>`;
+        }
+    }).join('');
 
     issueEl.innerHTML = `
         <h3>${issue.title}</h3>

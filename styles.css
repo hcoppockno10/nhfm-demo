@@ -267,7 +267,8 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-width: 600px;
+    max-width: 700px;
+    position: relative;
 }
 
 .patient-row {
@@ -306,9 +307,35 @@ html, body {
     margin-right: 14px;
 }
 
-.patient-info { flex: 1; }
-.patient-info h4 { font-size: 0.938rem; }
+.patient-info { flex: 1; min-width: 0; }
+.patient-info h4 { font-size: 0.938rem; font-weight: 600; }
 .patient-info p { font-size: 0.813rem; color: var(--nhs-grey); }
+
+.patient-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.patient-meta {
+    font-size: 0.75rem;
+    color: #768692;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.patient-summary {
+    margin-bottom: 2px;
+}
+
+.patient-conditions {
+    font-size: 0.7rem;
+    color: #8b9ba5;
+    font-style: italic;
+    margin-top: 2px;
+}
 
 .scan-result {
     margin-top: 6px;
@@ -319,6 +346,14 @@ html, body {
 .scan-result.alert {
     color: var(--nhs-red);
     font-weight: 600;
+}
+
+.action-required {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    color: var(--nhs-blue);
+    font-weight: 500;
+    font-style: italic;
 }
 
 .patient-status {
@@ -332,6 +367,41 @@ html, body {
 .patient-status.scanning { background: var(--nhs-yellow); color: #000; }
 .patient-status.ok { background: #d4edda; color: var(--nhs-green); }
 .patient-status.flagged { background: var(--nhs-red); color: #fff; }
+
+/* Ghost patients for infinite scroll illusion */
+.patient-row.ghost-patient {
+    opacity: 0.6;
+}
+
+.patient-row.ghost-patient:nth-child(n+27) {
+    opacity: 0.45;
+}
+
+.patient-row.ghost-patient:nth-child(n+29) {
+    opacity: 0.3;
+}
+
+.patient-row.ghost-patient:nth-child(n+31) {
+    opacity: 0.15;
+}
+
+.patient-row.ghost-patient:last-child {
+    opacity: 0.08;
+}
+
+/* Patient list fade effect at bottom for infinite scroll illusion */
+.patient-list::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.9) 60%, #fff);
+    pointer-events: none;
+    display: block;
+    margin-top: -80px;
+}
 
 /* Phase 2: Chat */
 .warning-banner {
@@ -714,6 +784,13 @@ html, body {
     position: absolute;
     left: 4px;
     color: var(--nhs-blue);
+}
+
+.evidence-source {
+    font-size: 0.7rem;
+    color: var(--nhs-light-blue);
+    font-style: italic;
+    margin-left: 4px;
 }
 
 .decision-buttons {
