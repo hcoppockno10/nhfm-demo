@@ -407,8 +407,10 @@ const NSAID_CKD_SCENARIO = {
         { trigger: "action1Approved", actor: "Clinician", text: "Approved: Advise patient to discontinue NSAID", time: "06 Jan, 14:33" },
         { trigger: "action2Approved", actor: "Clinician", text: "Approved: Schedule renal function recheck", time: "06 Jan, 14:34" },
         { trigger: "execute1", actor: "System", text: "Patient notification sent via NHS App", time: "06 Jan, 14:34" },
-        { trigger: "execute2", actor: "System", text: "Pathology order placed for 2-week follow-up", time: "06 Jan, 14:34" },
-        { trigger: "complete", actor: "System", text: "Workflow complete. Case closed.", time: "06 Jan, 14:34" }
+        { trigger: "patientConfirmStop", actor: "Patient", text: "Patient confirmed: Will stop taking ibuprofen", time: "06 Jan, 14:36" },
+        { trigger: "execute2", actor: "System", text: "Pathology order placed for 2-week follow-up", time: "06 Jan, 14:37" },
+        { trigger: "patientBookedAppt", actor: "Patient", text: "Patient booked blood test: 20 Jan, 09:15 at Parkside Medical Centre", time: "06 Jan, 14:38" },
+        { trigger: "complete", actor: "System", text: "Workflow complete. Case closed.", time: "06 Jan, 14:40" }
     ],
 
     guardrails: [

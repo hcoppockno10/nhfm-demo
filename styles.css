@@ -471,6 +471,69 @@ html, body {
     border-left: 3px solid #007f3b;
 }
 
+.chat-message.response .chat-bubble {
+    background: var(--nhs-light-blue);
+    border-bottom-right-radius: 4px;
+}
+
+/* Chat action buttons */
+.chat-response-buttons {
+    display: flex;
+    gap: 8px;
+    padding: 8px 44px;
+    animation: fadeIn 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.chat-action-btn {
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.chat-action-btn.primary {
+    background: #fff;
+    color: var(--nhs-blue);
+    border: 2px solid var(--nhs-blue);
+}
+
+.chat-action-btn.primary:hover {
+    background: var(--nhs-pale-grey);
+}
+
+.chat-action-btn.secondary {
+    background: #fff;
+    color: var(--nhs-blue);
+    border: 1px solid var(--nhs-blue);
+}
+
+.chat-action-btn.secondary:hover {
+    background: var(--nhs-pale-grey);
+}
+
+.chat-action-btn.clicked {
+    transform: scale(0.95);
+    background: var(--nhs-blue);
+    color: #fff;
+}
+
+.chat-action-btn.primary.selected {
+    background: var(--nhs-blue);
+    color: #fff;
+    border-color: var(--nhs-blue);
+    cursor: default;
+    pointer-events: none;
+}
+
+.chat-action-btn.secondary.disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+}
+
 .typing-indicator {
     display: flex;
     gap: 4px;
@@ -628,6 +691,17 @@ html, body {
 .iphone-chat-area .typing-indicator span {
     width: 6px;
     height: 6px;
+}
+
+.iphone-chat-area .chat-response-buttons {
+    padding: 6px 36px;
+    flex-wrap: wrap;
+}
+
+.iphone-chat-area .chat-action-btn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    border-radius: 16px;
 }
 
 .iphone-warning {
@@ -958,6 +1032,7 @@ html, body {
 .audit-event.system { border-left-color: var(--nhs-blue); }
 .audit-event.assistant { border-left-color: var(--nhs-light-blue); }
 .audit-event.clinician { border-left-color: var(--nhs-dark-blue); }
+.audit-event.patient { border-left-color: var(--nhs-green); }
 
 .audit-actor {
     flex-shrink: 0;
@@ -972,6 +1047,7 @@ html, body {
 .audit-actor.system { background: var(--nhs-pale-grey); color: var(--nhs-grey); }
 .audit-actor.assistant { background: #e0f2ff; color: var(--nhs-blue); }
 .audit-actor.clinician { background: var(--nhs-dark-blue); color: #fff; }
+.audit-actor.patient { background: #d4edda; color: var(--nhs-green); }
 
 .audit-text {
     flex: 1;

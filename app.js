@@ -43,7 +43,12 @@ const state = {
     isPlaying: false,
     isPaused: false,
     pauseResolve: null,
-    scenario: null
+    scenario: null,
+    // Patient response buttons state
+    patientResponses: {
+        understood: false,
+        appointmentBooked: false
+    }
 };
 
 // Simulated cursor element
@@ -85,6 +90,7 @@ function resetDemo() {
     state.isPlaying = false;
     state.isPaused = false;
     state.pauseResolve = null;
+    state.patientResponses = { understood: false, appointmentBooked: false };
     cursor.classList.remove('visible');
     // Hide iPhone overlay
     const overlay = document.getElementById('iphone-overlay');
@@ -326,6 +332,19 @@ async function runPhase4() {
         render();
         scrollToBottom('chat-container');
         await delay(1200);
+
+        // Patient clicks "I will stop taking ibuprofen" button
+        const understoodBtn = document.getElementById('btn-understood');
+        if (understoodBtn) {
+            await delay(600);
+            understoodBtn.classList.add('clicked');
+            await delay(400);
+            state.patientResponses.understood = true;
+            addAudit('patientConfirmStop');
+            render();
+            scrollToBottom('chat-container');
+            await delay(800);
+        }
     }
 
     // Step 18: notify-2
@@ -344,7 +363,20 @@ async function runPhase4() {
         state.stepIndex = 19;
         render();
         scrollToBottom('chat-container');
-        await delay(1500);
+        await delay(1200);
+
+        // Patient clicks "Book blood test" button
+        const bookBtn = document.getElementById('btn-book-appointment');
+        if (bookBtn) {
+            await delay(600);
+            bookBtn.classList.add('clicked');
+            await delay(400);
+            state.patientResponses.appointmentBooked = true;
+            addAudit('patientBookedAppt');
+            render();
+            scrollToBottom('chat-container');
+            await delay(800);
+        }
     }
 
     // Hide iPhone and complete
@@ -411,6 +443,7 @@ function jumpToStep(targetStep) {
     state.auditEvents = [];
     state.actionsStatus = {};
     state.scenario.actions.forEach(a => state.actionsStatus[a.id] = 'pending');
+    state.patientResponses = { understood: false, appointmentBooked: false };
 
     // Configure state based on step
     // Phase 1 steps (0-4): scan-start, scan-p1, scan-p2, scan-flagged, info-required
@@ -483,9 +516,17 @@ function jumpToStep(targetStep) {
             state.outcomeIndex = 0;
         }
 
+        // Patient responses based on step (responses happen after messages)
+        state.patientResponses = {
+            understood: targetStep >= 18,
+            appointmentBooked: targetStep >= 20
+        };
+
         // Audit events for execution
         if (targetStep >= 16) addAudit('execute1');
+        if (targetStep >= 18) addAudit('patientConfirmStop');
         if (targetStep >= 18) addAudit('execute2');
+        if (targetStep >= 20) addAudit('patientBookedAppt');
         if (targetStep >= 20) addAudit('complete');
 
         // Show iPhone for outcome messages (steps 16-19)
@@ -665,6 +706,44 @@ function renderPhase2Content() {
                     <div class="chat-bubble">${actions[i].patientMessageDraft}</div>
                 </div>
             `;
+
+            // Add response button after first message (medication advice)
+            if (i === 0) {
+                const understoodSelected = state.patientResponses.understood;
+                html += `
+                    <div class="chat-response-buttons">
+                        <button id="btn-understood" class="chat-action-btn primary${understoodSelected ? ' selected' : ''}">I will stop taking ibuprofen</button>
+                        <button class="chat-action-btn secondary${understoodSelected ? ' disabled' : ''}">I have questions</button>
+                    </div>
+                `;
+                if (understoodSelected) {
+                    html += `
+                        <div class="chat-message patient response">
+                            <div class="chat-avatar">PT</div>
+                            <div class="chat-bubble">I will stop taking ibuprofen and switch to paracetamol. Thank you for letting me know.</div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Add response button after second message (blood test appointment)
+            if (i === 1) {
+                const appointmentSelected = state.patientResponses.appointmentBooked;
+                html += `
+                    <div class="chat-response-buttons">
+                        <button id="btn-book-appointment" class="chat-action-btn primary${appointmentSelected ? ' selected' : ''}">Book blood test</button>
+                        <button class="chat-action-btn secondary${appointmentSelected ? ' disabled' : ''}">View available times</button>
+                    </div>
+                `;
+                if (appointmentSelected) {
+                    html += `
+                        <div class="chat-message patient response">
+                            <div class="chat-avatar">PT</div>
+                            <div class="chat-bubble">Appointment confirmed for Monday 20th January at 9:15am at Parkside Medical Centre.</div>
+                        </div>
+                    `;
+                }
+            }
         }
     }
 
