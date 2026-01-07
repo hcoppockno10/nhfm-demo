@@ -10,14 +10,14 @@ const COMMENTARY_CONFIG = {
             targetSelector: '#patient-list',
             position: 'right',
             title: 'AI-Powered Monitoring',
-            text: 'MedGuard continuously monitors patient records, cross-referencing medications with lab results to identify potential safety issues.'
+            text: 'NHFM autonomously monitors patient records to identify potential medication safety issues.'
         },
         {
             step: 3,
             targetSelector: '.patient-row.flagged',
             position: 'right',
             title: 'Safety Alert Detected',
-            text: 'The AI has detected that this patient is taking NSAIDs while showing declining kidney function - a known safety concern per NICE guidelines.'
+            text: 'NHFM has detected that this patient is taking NSAIDs while showing declining kidney function - a known safety concern per NICE guidelines.'
         },
         {
             step: 4,
@@ -62,7 +62,7 @@ const COMMENTARY_CONFIG = {
             text: 'Approved actions are executed automatically, with every step recorded for full traceability and clinical governance.'
         },
         {
-            step: 19,
+            step: 20,
             targetSelector: '#audit-timeline',
             position: 'top',
             title: 'Workflow Complete',
@@ -74,6 +74,8 @@ const COMMENTARY_CONFIG = {
 const CommentarySystem = {
     bubbleElement: null,
     enabled: true,
+    waitingForNext: false,
+    nextResolve: null,
 
     init() {
         // Create the commentary bubble element
@@ -85,29 +87,18 @@ const CommentarySystem = {
             </div>
             <div class="commentary-bubble-body">
                 <p class="commentary-bubble-text"></p>
+                <button class="commentary-next-btn">Next</button>
             </div>
         `;
         document.body.appendChild(this.bubbleElement);
 
+        // Add click handler for Next button
+        this.bubbleElement.querySelector('.commentary-next-btn').addEventListener('click', () => {
+            this.onNextClick();
+        });
+
         // Add toggle button to header
         this.createToggleButton();
-
-        // Reposition on window resize
-        window.addEventListener('resize', () => {
-            if (this.bubbleElement.classList.contains('visible')) {
-                const currentStep = this.getCurrentStep();
-                if (currentStep !== null) {
-                    this.showForStep(currentStep);
-                }
-            }
-        });
-    },
-
-    getCurrentStep() {
-        const entry = COMMENTARY_CONFIG.entries.find(e =>
-            this.bubbleElement.dataset.step === String(e.step)
-        );
-        return entry ? entry.step : null;
     },
 
     createToggleButton() {
@@ -135,6 +126,8 @@ const CommentarySystem = {
         }
 
         if (!this.enabled) {
+            // Cancel any pending wait so demo continues playing
+            this.cancelWait();
             this.hide();
         } else {
             // Re-show for current step if applicable
@@ -161,73 +154,53 @@ const CommentarySystem = {
         this.bubbleElement.querySelector('.commentary-bubble-title').textContent = entry.title;
         this.bubbleElement.querySelector('.commentary-bubble-text').textContent = entry.text;
 
-        // Reset classes and set position
-        this.bubbleElement.className = `commentary-bubble position-${entry.position}`;
+        // Fixed position on right side - no dynamic positioning needed
+        this.bubbleElement.className = 'commentary-bubble fixed-right';
 
-        // Position the bubble relative to target element (with slight delay for DOM updates)
-        setTimeout(() => {
-            this.positionBubble(entry.targetSelector, entry.position);
-
-            // Show bubble
-            requestAnimationFrame(() => {
-                this.bubbleElement.classList.add('visible');
-            });
-        }, 100);
-    },
-
-    positionBubble(targetSelector, position) {
-        const target = document.querySelector(targetSelector);
-
-        if (!target || !target.offsetParent) {
-            // Fallback: position in content area
-            this.bubbleElement.style.left = '50%';
-            this.bubbleElement.style.top = '200px';
-            this.bubbleElement.style.transform = 'translateX(-50%)';
-            return;
-        }
-
-        const targetRect = target.getBoundingClientRect();
-        const bubbleWidth = 300;
-        const bubbleHeight = this.bubbleElement.offsetHeight || 150;
-        const offset = 20; // Gap between target and bubble
-
-        let left, top;
-
-        switch (position) {
-            case 'right':
-                left = targetRect.right + offset;
-                top = targetRect.top + Math.min(30, targetRect.height / 4);
-                break;
-            case 'left':
-                left = targetRect.left - bubbleWidth - offset;
-                top = targetRect.top + Math.min(30, targetRect.height / 4);
-                break;
-            case 'top':
-                left = targetRect.left + (targetRect.width / 2) - (bubbleWidth / 2);
-                top = targetRect.top - bubbleHeight - offset;
-                break;
-            case 'bottom':
-                left = targetRect.left + (targetRect.width / 2) - (bubbleWidth / 2);
-                top = targetRect.bottom + offset;
-                break;
-            default:
-                left = targetRect.right + offset;
-                top = targetRect.top;
-        }
-
-        // Clamp to viewport
-        const maxLeft = window.innerWidth - bubbleWidth - 20;
-        const maxTop = window.innerHeight - bubbleHeight - 20;
-        left = Math.max(20, Math.min(left, maxLeft));
-        top = Math.max(80, Math.min(top, maxTop)); // 80 to stay below header
-
-        this.bubbleElement.style.left = `${left}px`;
-        this.bubbleElement.style.top = `${top}px`;
-        this.bubbleElement.style.transform = 'none';
+        // Show bubble
+        requestAnimationFrame(() => {
+            this.bubbleElement.classList.add('visible');
+        });
     },
 
     hide() {
         this.bubbleElement.classList.remove('visible');
         delete this.bubbleElement.dataset.step;
+    },
+
+    // Called when user clicks the Next button
+    onNextClick() {
+        if (this.nextResolve) {
+            this.waitingForNext = false;
+            this.nextResolve();
+            this.nextResolve = null;
+        }
+        this.hide();
+    },
+
+    // Returns a promise that resolves when user clicks Next
+    // Call this after showing commentary to pause the demo
+    waitForNext() {
+        if (!this.enabled || !this.bubbleElement.classList.contains('visible')) {
+            return Promise.resolve();
+        }
+        this.waitingForNext = true;
+        return new Promise(resolve => {
+            this.nextResolve = resolve;
+        });
+    },
+
+    // Check if we're currently waiting for user to click Next
+    isWaiting() {
+        return this.waitingForNext;
+    },
+
+    // Cancel waiting (e.g., when demo is reset)
+    cancelWait() {
+        if (this.nextResolve) {
+            this.waitingForNext = false;
+            this.nextResolve();
+            this.nextResolve = null;
+        }
     }
 };

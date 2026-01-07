@@ -359,7 +359,7 @@ const NSAID_CKD_SCENARIO = {
 
     // Streamlined patient chat (5 messages)
     patientChat: [
-        { id: "p1", role: "assistant", text: "Hello. I'm the NHS Medication Safety Assistant contacting you about some recent test results. Can I confirm I'm speaking with J.S., date of birth 15th March 1957?", delayMs: 800 },
+        { id: "p1", role: "assistant", text: "Hello. I'm the NHS National Health Foundation Model contacting you regarding some routine screening. Can I confirm I'm speaking with James Sullivan, date of birth 15th March 1957?", delayMs: 800 },
         { id: "p2", role: "patient", text: "Yes, that's me. Is everything okay?" },
         { id: "p3", role: "assistant", text: "Your recent blood test showed some changes we'd like to understand better. Are you currently taking any pain relief medications - either prescribed or bought over the counter?", delayMs: 900 },
         { id: "p4", role: "patient", text: "I've been taking ibuprofen from the chemist for my knee pain. About 3 times a day for the past couple of weeks." },

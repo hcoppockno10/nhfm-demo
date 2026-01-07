@@ -1239,7 +1239,7 @@ html, body {
 /* Commentary Bubble */
 .commentary-bubble {
     position: fixed;
-    width: 300px;
+    width: 320px;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 24px rgba(0, 48, 135, 0.25);
@@ -1251,6 +1251,12 @@ html, body {
     transition: opacity 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
                 visibility 0.35s cubic-bezier(0.25, 0.1, 0.25, 1),
                 transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Fixed position on the right side */
+.commentary-bubble.fixed-right {
+    right: 30px;
+    top: 120px;
 }
 
 .commentary-bubble.visible {
@@ -1298,45 +1304,32 @@ html, body {
     font-size: 0.875rem;
     line-height: 1.55;
     color: var(--nhs-grey);
+    margin-bottom: 14px;
 }
 
-/* Bubble Arrow/Pointer */
-.commentary-bubble::after {
-    content: "";
-    position: absolute;
-    width: 14px;
-    height: 14px;
+.commentary-next-btn {
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
     background: var(--nhs-blue);
-    transform: rotate(45deg);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
 }
 
-/* Position variants */
-.commentary-bubble.position-right::after {
-    left: -8px;
-    top: 24px;
-}
-
-.commentary-bubble.position-left::after {
-    right: -8px;
-    top: 24px;
-}
-
-.commentary-bubble.position-top::after {
-    bottom: -8px;
-    left: 50%;
-    margin-left: -7px;
-}
-
-.commentary-bubble.position-bottom::after {
-    top: -8px;
-    left: 50%;
-    margin-left: -7px;
+.commentary-next-btn:hover {
+    background: var(--nhs-dark-blue);
 }
 
 /* Responsive adjustments for commentary */
 @media (max-width: 1100px) {
     .commentary-bubble {
-        width: 260px;
+        width: 280px;
+        right: 20px;
     }
 }
 
@@ -1346,7 +1339,8 @@ html, body {
     }
 
     .commentary-bubble {
-        width: 240px;
+        width: 260px;
+        right: 15px;
     }
 }
 

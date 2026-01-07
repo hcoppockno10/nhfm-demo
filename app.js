@@ -100,10 +100,20 @@ function resetDemo() {
     const iphone = document.getElementById('iphone-mockup');
     if (overlay) overlay.classList.remove('visible');
     if (iphone) iphone.classList.remove('visible');
-    // Hide commentary
+    // Hide commentary and cancel any pending wait
+    CommentarySystem.cancelWait();
     CommentarySystem.hide();
     updatePlayPauseButton();
     render();
+}
+
+// Helper to wait for commentary Next button if commentary is shown
+async function waitForCommentary() {
+    // Small delay to let commentary appear
+    await new Promise(resolve => setTimeout(resolve, 150));
+    if (CommentarySystem.enabled && CommentarySystem.bubbleElement.classList.contains('visible')) {
+        await CommentarySystem.waitForNext();
+    }
 }
 
 function handlePlayClick() {
@@ -138,23 +148,23 @@ async function startDemo() {
 
             // Show iPhone (always needed for Phase 2)
             if (overlay) overlay.classList.add('visible');
-            if (startPhase < 2) await delay(200);
+            if (startPhase < 2) await delay(300); // 200 * 1.5
             if (iphone) iphone.classList.add('visible');
-            if (startPhase < 2) await delay(600);
+            if (startPhase < 2) await delay(900); // 600 * 1.5
 
             await runPhase2();
 
             if (iphone) iphone.classList.remove('visible');
-            await delay(400);
+            await delay(600); // 400 * 1.5
             if (overlay) overlay.classList.remove('visible');
-            await delay(400);
+            await delay(600); // 400 * 1.5
         }
 
         // Phase 3: Clinician Review (with cursor) - skip if already past
         if (startPhase <= 3) {
             state.phase = 3;
             render();
-            await delay(600);
+            await delay(900); // 600 * 1.5
             cursor.classList.add('visible');
             await runPhase3();
             cursor.classList.remove('visible');
@@ -164,7 +174,7 @@ async function startDemo() {
         if (startPhase <= 4) {
             state.phase = 4;
             render();
-            await delay(500);
+            await delay(750); // 500 * 1.5
             await runPhase4();
         }
 
@@ -186,6 +196,7 @@ async function runPhase1() {
         state.stepIndex = 0;
         addAudit('scan');
         render();
+        await waitForCommentary();
     }
 
     // Start from current position (or 0 if before this phase)
@@ -196,19 +207,22 @@ async function runPhase1() {
         state.stepIndex = i + 1;
         render();
 
+        // Keep scanning speed normal for OK patients
         await delay(1000);
 
         if (PATIENT_LIST[i].status === 'flagged') {
-            await delay(1500);
+            await waitForCommentary(); // Step 3: flagged
+            await delay(2250); // 1500 * 1.5
             // Show "info required" step
             state.stepIndex = 4; // info-required
             render();
-            await delay(1500);
+            await waitForCommentary(); // Step 4: info-required
+            await delay(2250); // 1500 * 1.5
             break;
         }
     }
 
-    await delay(500);
+    await delay(750); // 500 * 1.5
 }
 
 // ========== PHASE 2: PATIENT CHAT ==========
@@ -231,7 +245,7 @@ async function runPhase2() {
 
         if (msg.role === 'assistant') {
             showTyping(true);
-            await delay(msg.delayMs || 1200);
+            await delay((msg.delayMs || 1200) * 1.5);
             showTyping(false);
         }
 
@@ -240,23 +254,29 @@ async function runPhase2() {
         render();
         scrollToBottom('chat-container');
 
-        await delay(1200);
+        // Check for commentary at step 8 (critical information about ibuprofen)
+        if (state.stepIndex === 8) {
+            await waitForCommentary();
+        }
+
+        await delay(1800); // 1200 * 1.5
     }
 
     addAudit('patientEnd');
-    await delay(1800);
+    await delay(2700); // 1800 * 1.5
 }
 
 // ========== PHASE 3: CLINICIAN REVIEW ==========
 async function runPhase3() {
     const startStep = state.stepIndex;
 
-    // Step 11: review-start
+    // Step 11: review-start (commentary: Human-in-the-Loop at step 10, shown when entering phase 3)
     if (startStep <= 11) {
         state.stepIndex = 11;
         addAudit('clinicianStart');
         render();
-        await delay(1000);
+        await waitForCommentary(); // Step 10/11: Human-in-the-Loop
+        await delay(1500); // 1000 * 1.5
     }
 
     // Step 12: issue-agreed
@@ -270,7 +290,8 @@ async function runPhase3() {
         state.stepIndex = 12;
         addAudit('issueAgreed');
         render();
-        await delay(1200);
+        await waitForCommentary(); // Step 11/12: Clinician Validation
+        await delay(1800); // 1200 * 1.5
     }
 
     // Step 13: action1-approved
@@ -284,7 +305,8 @@ async function runPhase3() {
         state.stepIndex = 13;
         addAudit('action1Approved');
         render();
-        await delay(1200);
+        await waitForCommentary(); // Step 12: Approval Required
+        await delay(1800); // 1200 * 1.5
     }
 
     // Step 14: action2-approved
@@ -298,7 +320,8 @@ async function runPhase3() {
         state.stepIndex = 14;
         addAudit('action2Approved');
         render();
-        await delay(1000);
+        await waitForCommentary(); // Step 14: Execution & Audit Trail
+        await delay(1500); // 1000 * 1.5
     }
 }
 
@@ -312,7 +335,7 @@ async function runPhase4() {
     if (startStep <= 15) {
         state.stepIndex = 15;
         render();
-        await delay(800);
+        await delay(1200); // 800 * 1.5
     }
 
     // Step 16: notify-1
@@ -320,35 +343,35 @@ async function runPhase4() {
         state.stepIndex = 16;
         addAudit('execute1');
         render();
-        await delay(600);
+        await delay(900); // 600 * 1.5
         if (overlay) overlay.classList.add('visible');
-        await delay(200);
+        await delay(300); // 200 * 1.5
         if (iphone) iphone.classList.add('visible');
-        await delay(600);
+        await delay(900); // 600 * 1.5
     }
 
     // Step 17: outcome-1
     if (startStep <= 17) {
         showTyping(true);
-        await delay(1000);
+        await delay(1500); // 1000 * 1.5
         showTyping(false);
         state.outcomeIndex = 1;
         state.stepIndex = 17;
         render();
         scrollToBottom('chat-container');
-        await delay(1200);
+        await delay(1800); // 1200 * 1.5
 
         // Patient clicks "I will stop taking ibuprofen" button
         const understoodBtn = document.getElementById('btn-understood');
         if (understoodBtn) {
-            await delay(600);
+            await delay(900); // 600 * 1.5
             understoodBtn.classList.add('clicked');
-            await delay(400);
+            await delay(600); // 400 * 1.5
             state.patientResponses.understood = true;
             addAudit('patientConfirmStop');
             render();
             scrollToBottom('chat-container');
-            await delay(800);
+            await delay(1200); // 800 * 1.5
         }
     }
 
@@ -362,46 +385,47 @@ async function runPhase4() {
     // Step 19: outcome-2
     if (startStep <= 19) {
         showTyping(true);
-        await delay(1000);
+        await delay(1500); // 1000 * 1.5
         showTyping(false);
         state.outcomeIndex = 2;
         state.stepIndex = 19;
         render();
         scrollToBottom('chat-container');
-        await delay(1200);
+        await delay(1800); // 1200 * 1.5
 
         // Patient clicks "Book blood test" button
         const bookBtn = document.getElementById('btn-book-appointment');
         if (bookBtn) {
-            await delay(600);
+            await delay(900); // 600 * 1.5
             bookBtn.classList.add('clicked');
-            await delay(400);
+            await delay(600); // 400 * 1.5
             state.patientResponses.appointmentBooked = true;
             addAudit('patientBookedAppt');
             render();
             scrollToBottom('chat-container');
-            await delay(800);
+            await delay(1200); // 800 * 1.5
         }
     }
 
     // Hide iPhone and complete
     if (iphone) iphone.classList.remove('visible');
-    await delay(400);
+    await delay(600); // 400 * 1.5
     if (overlay) overlay.classList.remove('visible');
 
-    await delay(800);
+    await delay(1200); // 800 * 1.5
     state.stepIndex = 20;
     addAudit('complete');
     render();
+    await waitForCommentary(); // Step 20: Workflow Complete
 
-    await delay(1000);
+    await delay(1500); // 1000 * 1.5
 }
 
 // ========== CURSOR SIMULATION ==========
 async function moveCursorTo(element) {
     // Scroll element into view smoothly
     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    await delay(400);
+    await delay(600); // 400 * 1.5
 
     // Now get position and move cursor
     const rect = element.getBoundingClientRect();
@@ -411,14 +435,14 @@ async function moveCursorTo(element) {
     cursor.style.left = x + 'px';
     cursor.style.top = y + 'px';
 
-    await delay(600);
+    await delay(900); // 600 * 1.5
 }
 
 async function simulateClick(element) {
     cursor.classList.add('clicking');
-    await delay(200);
+    await delay(300); // 200 * 1.5
     cursor.classList.remove('clicking');
-    await delay(150);
+    await delay(225); // 150 * 1.5
 }
 
 // ========== TIMELINE NAVIGATION ==========
@@ -433,6 +457,8 @@ function jumpToStep(targetStep) {
         }
     }
     cursor.classList.remove('visible');
+    // Cancel any pending commentary wait
+    CommentarySystem.cancelWait();
 
     // Get overlay elements
     const overlay = document.getElementById('iphone-overlay');
