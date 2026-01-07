@@ -107,8 +107,21 @@
                     <div class="phase-body">
                         <div class="clinician-content">
                             <div id="patient-summary" class="patient-summary"></div>
-                            <div id="issue-card" class="issue-card"></div>
-                            <div id="action-cards"></div>
+                            <div class="review-section issue-section">
+                                <div class="section-header">
+                                    <span class="section-icon issue-icon">!</span>
+                                    <h3>Identified Issue</h3>
+                                </div>
+                                <div id="issue-card" class="issue-card"></div>
+                            </div>
+                            <div class="review-section actions-section">
+                                <div class="section-header">
+                                    <span class="section-icon actions-icon">→</span>
+                                    <h3>Recommended Actions</h3>
+                                    <span class="actions-count" id="actions-count"></span>
+                                </div>
+                                <div id="action-cards" class="action-cards-list"></div>
+                            </div>
                         </div>
                     </div>
                 </section>

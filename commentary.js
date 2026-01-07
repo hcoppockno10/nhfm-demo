@@ -24,7 +24,7 @@ const COMMENTARY_CONFIG = {
             targetSelector: '#iphone-mockup',
             position: 'left',
             title: 'Patient Engagement',
-            text: 'NHFM can interact with patients through the NHS app in a heavily guardrailed chat interface. It can gather information but never provide medical advice without clinician oversight.'
+            text: 'NHFM can interact with patients through the NHS app in a heavily guardrailed chat interface. It can gather information but never provides medical advice without clinician oversight.'
         },
         {
             step: 9,
@@ -37,7 +37,7 @@ const COMMENTARY_CONFIG = {
             step: 11,
             targetSelector: '#issue-card',
             position: 'right',
-            title: 'Human-in-the-Loop',
+            title: 'Clinician-in-the-Loop',
             text: 'All clinical decisions and actions require explicit clinician approval..'
         },
         {

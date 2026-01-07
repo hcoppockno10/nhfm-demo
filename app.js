@@ -838,6 +838,16 @@ function renderPhase3Content() {
 
     // Action cards
     const actionsEl = document.getElementById('action-cards');
+    const approvedCount = Object.values(state.actionsStatus).filter(s => s === 'approved').length;
+    const totalActions = s.actions.length;
+
+    // Update actions count badge
+    const actionsCountEl = document.getElementById('actions-count');
+    if (actionsCountEl) {
+        actionsCountEl.textContent = `${approvedCount}/${totalActions} approved`;
+        actionsCountEl.classList.toggle('all-approved', approvedCount === totalActions);
+    }
+
     actionsEl.innerHTML = s.actions.map(a => {
         const status = state.actionsStatus[a.id];
         const cardClass = status !== 'pending' ? status : '';

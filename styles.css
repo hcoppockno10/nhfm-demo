@@ -260,6 +260,19 @@ html, body {
     flex: 1;
     overflow-y: auto;
     padding: 24px;
+    position: relative;
+}
+
+/* Fade overlay for Phase 1 patient list */
+#phase-1 .phase-body::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.9) 60%, #fff);
+    pointer-events: none;
 }
 
 /* Phase 1: Patient List */
@@ -389,19 +402,6 @@ html, body {
     opacity: 0.08;
 }
 
-/* Patient list fade effect at bottom for infinite scroll illusion */
-.patient-list::after {
-    content: '';
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 80px;
-    background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.9) 60%, #fff);
-    pointer-events: none;
-    display: block;
-    margin-top: -80px;
-}
 
 /* Phase 2: Chat */
 .warning-banner {
@@ -805,17 +805,95 @@ html, body {
 .labs-table th { background: var(--nhs-pale-grey); color: var(--nhs-grey); }
 .labs-table .flag-low, .labs-table .flag-high { color: var(--nhs-red); font-weight: 600; }
 
+/* Review Sections */
+.review-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.issue-section {
+    border: 2px solid var(--nhs-red);
+    background: linear-gradient(135deg, #fff 0%, #fef8f8 100%);
+}
+
+.actions-section {
+    border: 2px solid var(--nhs-blue);
+    background: linear-gradient(135deg, #fff 0%, #f5f9fc 100%);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e8edee;
+}
+
+.section-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.issue-section .section-header h3 {
+    color: var(--nhs-red);
+}
+
+.actions-section .section-header h3 {
+    color: var(--nhs-blue);
+}
+
+.section-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.section-icon.issue-icon {
+    background: var(--nhs-red);
+    color: #fff;
+}
+
+.section-icon.actions-icon {
+    background: var(--nhs-blue);
+    color: #fff;
+    font-size: 1rem;
+}
+
+.actions-count {
+    margin-left: auto;
+    background: var(--nhs-pale-grey);
+    color: var(--nhs-grey);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.actions-count.all-approved {
+    background: #d4edda;
+    color: var(--nhs-green);
+}
+
 /* Issue Card */
 .issue-card {
-    background: #fff;
-    border: 2px solid var(--nhs-red);
-    border-radius: 6px;
-    padding: 18px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
 }
 
 .issue-card h3 {
-    font-size: 1rem;
-    color: var(--nhs-red);
+    font-size: 0.938rem;
+    color: var(--nhs-dark-blue);
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -823,16 +901,7 @@ html, body {
 }
 
 .issue-card h3::before {
-    content: "!";
-    background: var(--nhs-red);
-    color: #fff;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.813rem;
+    display: none;
 }
 
 .issue-description {
@@ -932,22 +1001,32 @@ html, body {
     resize: none;
 }
 
+/* Action Cards List */
+.action-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
 /* Action Cards */
 .action-card {
     background: #fff;
-    border: 1px solid #ddd;
+    border: 1px solid #d0dde5;
     border-radius: 6px;
-    padding: 18px;
+    padding: 16px;
     transition: all 0.3s;
+    border-left: 4px solid var(--nhs-blue);
 }
 
 .action-card.approved {
     border-color: var(--nhs-green);
+    border-left-color: var(--nhs-green);
     background: #f0fff4;
 }
 
 .action-card.rejected {
     border-color: var(--nhs-red);
+    border-left-color: var(--nhs-red);
     background: #fef2f2;
     opacity: 0.6;
 }
