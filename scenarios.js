@@ -1,5 +1,5 @@
 /**
- * MedGuard Demo - Scenario Data
+ * NHFM Demo - Scenario Data
  */
 
 // Patient list for AI scanning phase - expanded with full profiles
@@ -399,18 +399,18 @@ const NSAID_CKD_SCENARIO = {
     ],
 
     auditEvents: [
-        { trigger: "scan", actor: "System", text: "Medication safety alert generated: NSAID use in CKD patient", time: "06 Jan, 09:15" },
-        { trigger: "patientStart", actor: "Assistant", text: "Patient engagement initiated via NHS App", time: "06 Jan, 09:15" },
-        { trigger: "patientEnd", actor: "Assistant", text: "Patient confirmed OTC ibuprofen use (400mg TDS x 2 weeks)", time: "06 Jan, 10:52" },
-        { trigger: "clinicianStart", actor: "System", text: "Case escalated to clinician for review", time: "06 Jan, 10:52" },
+        { trigger: "scan", actor: "NHFM", text: "Medication safety alert generated: NSAID use in CKD patient", time: "06 Jan, 09:15" },
+        { trigger: "patientStart", actor: "NHFM", text: "Patient engagement initiated via NHS App", time: "06 Jan, 09:15" },
+        { trigger: "patientEnd", actor: "NHFM", text: "Patient confirmed OTC ibuprofen use (400mg TDS x 2 weeks)", time: "06 Jan, 10:52" },
+        { trigger: "clinicianStart", actor: "NHFM", text: "Case escalated to clinician for review", time: "06 Jan, 10:52" },
         { trigger: "issueAgreed", actor: "Clinician", text: "Clinician agreed with flagged issue assessment", time: "06 Jan, 14:32" },
         { trigger: "action1Approved", actor: "Clinician", text: "Approved: Advise patient to discontinue NSAID", time: "06 Jan, 14:33" },
         { trigger: "action2Approved", actor: "Clinician", text: "Approved: Schedule renal function recheck", time: "06 Jan, 14:34" },
-        { trigger: "execute1", actor: "System", text: "Patient notification sent via NHS App", time: "06 Jan, 14:34" },
+        { trigger: "execute1", actor: "NHFM", text: "Patient notification sent via NHS App", time: "06 Jan, 14:34" },
         { trigger: "patientConfirmStop", actor: "Patient", text: "Patient confirmed: Will stop taking ibuprofen", time: "06 Jan, 14:36" },
-        { trigger: "execute2", actor: "System", text: "Pathology order placed for 2-week follow-up", time: "06 Jan, 14:37" },
+        { trigger: "execute2", actor: "NHFM", text: "Pathology order placed for 2-week follow-up", time: "06 Jan, 14:37" },
         { trigger: "patientBookedAppt", actor: "Patient", text: "Patient booked blood test: 20 Jan, 09:15 at Parkside Medical Centre", time: "06 Jan, 14:38" },
-        { trigger: "complete", actor: "System", text: "Workflow complete. Case closed.", time: "06 Jan, 14:40" }
+        { trigger: "complete", actor: "NHFM", text: "Workflow complete. Case closed.", time: "06 Jan, 14:40" }
     ],
 
     guardrails: [

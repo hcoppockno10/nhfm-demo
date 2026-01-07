@@ -1,5 +1,5 @@
 /**
- * MedGuard Demo - Auto-Play with Simulated Mouse
+ * NHFM Demo - Auto-Play with Simulated Mouse
  */
 
 // Timeline steps definition (21 total)

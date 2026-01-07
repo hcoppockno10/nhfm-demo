@@ -1,5 +1,5 @@
 /**
- * MedGuard Demo - Commentary System
+ * NHFM Demo - Commentary System
  * Shows NHS-styled callout bubbles at key workflow moments
  */
 

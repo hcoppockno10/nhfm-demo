@@ -1,5 +1,5 @@
 /**
- * MedGuard Demo - NHS-Themed Styles
+ * NHFM Demo
  * NHS Blue: #005eb8, Dark Blue: #003087, Green: #007f3b, Red: #da291c
  */
 
@@ -1029,8 +1029,7 @@ html, body {
     }
 }
 
-.audit-event.system { border-left-color: var(--nhs-blue); }
-.audit-event.assistant { border-left-color: var(--nhs-light-blue); }
+.audit-event.nhfm { border-left-color: var(--nhs-blue); }
 .audit-event.clinician { border-left-color: var(--nhs-dark-blue); }
 .audit-event.patient { border-left-color: var(--nhs-green); }
 
@@ -1044,8 +1043,7 @@ html, body {
     letter-spacing: 0.3px;
 }
 
-.audit-actor.system { background: var(--nhs-pale-grey); color: var(--nhs-grey); }
-.audit-actor.assistant { background: #e0f2ff; color: var(--nhs-blue); }
+.audit-actor.nhfm { background: var(--nhs-blue); color: #fff; }
 .audit-actor.clinician { background: var(--nhs-dark-blue); color: #fff; }
 .audit-actor.patient { background: #d4edda; color: var(--nhs-green); }
 
